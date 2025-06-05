@@ -1,0 +1,144 @@
+{
+  "header": {
+    "home": "Home",
+    "products": "Products",
+    "account": "Account",
+    "cart": "Cart",
+    "connect": "Connect Wallet",
+    "connecting": "Connecting..."
+  },
+  "footer": {
+    "brand": {
+      "title": "Crab Emporium",
+      "desc": "The premier marketplace for premium crab products, powered by blockchain technology."
+    },
+    "quickLinks": {
+      "title": "Quick Links",
+      "home": "Home",
+      "products": "Products",
+      "cart": "Cart",
+      "account": "My Account"
+    },
+    "information": {
+      "title": "Information",
+      "about": "About Us",
+      "shipping": "Shipping Policy",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "address": "1234 Crab Avenue",
+      "city": "Ocean City, OC 98765",
+      "email": "support@crabemporium.com",
+      "phone": "+1 (123) 456-7890"
+    },
+    "rights": "All rights reserved.",
+    "policies": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    }
+  },
+  "products": {
+    "title": "Our Premium Crab Collection",
+    "search": "Search crabs...",
+    "filters": {
+      "show": "Show Filters",
+      "hide": "Hide Filters",
+      "title": "Filters",
+      "clear": "Clear All",
+      "categories": "Categories",
+      "priceRange": "Price Range (ETH)",
+      "minPrice": "Min Price",
+      "maxPrice": "Max Price",
+      "activeFilters": "Active Filters",
+      "category": "Category",
+      "price": "Price",
+      "sort": {
+        "priceLow": "Price: Low to High",
+        "priceHigh": "Price: High to Low",
+        "nameAsc": "Name: A to Z",
+        "nameDesc": "Name: Z to A"
+      }
+    },
+    "noResults": {
+      "title": "No products found",
+      "desc": "Try adjusting your filters or search terms",
+      "action": "Clear Filters"
+    },
+    "showing": "Showing",
+    "products": "products",
+    "product": "product"
+  },
+  "cart": {
+    "empty": {
+      "title": "Your Cart is Empty",
+      "desc": "Looks like you haven't added any crabs to your cart yet.",
+      "action": "Browse Products"
+    },
+    "title": "Your Cart",
+    "items": "Cart Items",
+    "clear": "Clear Cart",
+    "summary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "total": "Total"
+    },
+    "checkout": "Proceed to Checkout",
+    "connect": "Connect Wallet to Checkout",
+    "continue": "Continue Shopping"
+  },
+  "hero": {
+    "title": "Premium Crabs on the Blockchain",
+    "subtitle": "Fresh from Hongze Lake, now on the blockchain! 🦀",
+    "shopNow": "Shop Now",
+    "connectWallet": "Connect Wallet"
+  },
+  "features": {
+    "quality": {
+      "title": "Premium Quality",
+      "desc": "Selected premium crabs"
+    },
+    "fresh": {
+      "title": "Fresh Delivery",
+      "desc": "Direct from source"
+    },
+    "delivery": {
+      "title": "Fast Shipping",
+      "desc": "24-hour delivery"
+    },
+    "certified": {
+      "title": "Certified",
+      "desc": "Blockchain verified"
+    }
+  },
+  "featured": {
+    "title": "Today's Featured 🦀",
+    "desc": "Each crab comes with blockchain certification, guaranteeing authenticity!",
+    "viewAll": "View All Products"
+  },
+  "why": {
+    "title": "Why Choose Us?",
+    "desc": "Blockchain technology ensures the quality of every crab! 🌊",
+    "traceability": {
+      "title": "Traceability",
+      "desc": "Each crab has a unique blockchain ID"
+    },
+    "security": {
+      "title": "Secure Transaction",
+      "desc": "Safe blockchain payment"
+    },
+    "speed": {
+      "title": "Fast Delivery",
+      "desc": "24-hour delivery guaranteed"
+    }
+  },
+  "cta": {
+    "title": "Ready to enjoy? 🦀",
+    "desc": "Connect your wallet and buy authentic Hongze Lake crabs!",
+    "buyNow": "Buy Now"
+  }
+}
