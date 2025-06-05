@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { Product } from '../../types/Product';
 import { useCart } from '../../contexts/CartContext';
+import { useTranslation } from 'react-i18next';
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const { t } = useTranslation();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,12 +32,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         />
         {product.stock <= 10 && (
           <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold py-1 px-2 rounded">
-            Low Stock
+            {t('products.lowStock')}
           </span>
         )}
         {product.featured && (
           <span className="absolute top-2 left-2 bg-accent-500 text-black text-xs font-bold py-1 px-2 rounded">
-            Featured
+            {t('products.featured')}
           </span>
         )}
       </div>
@@ -53,7 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         <div className="flex justify-between items-center mt-4">
           <span className="text-sm text-gray-400">
-            Origin: {product.origin}
+            {t('products.origin')}: {product.origin}
           </span>
           <span className="text-sm text-gray-400">
             {product.weight}
@@ -65,7 +67,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center space-x-2 py-2 rounded-lg transition-colors"
         >
           <ShoppingCart size={18} />
-          <span>Add to Cart</span>
+          <span>{t('products.addToCart')}</span>
         </button>
       </div>
     </Link>

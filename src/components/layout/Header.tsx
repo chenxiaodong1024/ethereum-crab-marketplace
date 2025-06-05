@@ -50,7 +50,7 @@ const Header: React.FC = () => {
             <span className="text-accent-500">
               <ShoppingCart size={28} className="inline-block mr-2" />
             </span>
-            <span className="text-xl font-bold text-white">Crab Emporium</span>
+            <span className="text-xl font-bold text-white">{t('header.brand')}</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -103,7 +103,7 @@ const Header: React.FC = () => {
                         className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                         onClick={() => setAccountMenuOpen(false)}
                       >
-                        My Account
+                        {t('header.account')}
                       </Link>
                       <button
                         className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
@@ -129,7 +129,7 @@ const Header: React.FC = () => {
                 disabled={isConnecting}
               >
                 <Wallet size={18} />
-                <span>{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+                <span>{isConnecting ? t('header.connecting') : t('header.connect')}</span>
               </button>
             )}
           </div>
@@ -210,7 +210,7 @@ const Header: React.FC = () => {
                 disabled={isConnecting}
               >
                 <Wallet size={18} />
-                <span>{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+                <span>{isConnecting ? t('header.connecting') : t('header.connect')}</span>
               </button>
             )}
           </div>

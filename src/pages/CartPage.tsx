@@ -3,22 +3,24 @@ import { Link } from 'react-router-dom';
 import { Trash2, ShoppingBag, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWeb3 } from '../contexts/Web3Context';
+import { useTranslation } from 'react-i18next';
 
 const CartPage: React.FC = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
   const { isConnected, connect } = useWeb3();
+  const { t } = useTranslation();
   
   if (items.length === 0) {
     return (
       <div className="container pt-32 pb-16 text-center">
         <div className="max-w-md mx-auto">
           <ShoppingBag size={64} className="mx-auto text-gray-600 mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-4">Your Cart is Empty</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('cart.empty.title')}</h2>
           <p className="text-gray-400 mb-6">
-            Looks like you haven't added any crabs to your cart yet.
+            {t('cart.empty.desc')}
           </p>
           <Link to="/products" className="btn btn-primary">
-            Browse Products
+            {t('cart.empty.action')}
           </Link>
         </div>
       </div>
@@ -28,7 +30,7 @@ const CartPage: React.FC = () => {
   return (
     <div className="pt-24 pb-16">
       <div className="container">
-        <h1 className="text-3xl font-bold text-white mb-8">Your Cart</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('cart.title')}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -36,14 +38,14 @@ const CartPage: React.FC = () => {
             <div className="bg-gray-800 rounded-xl p-6">
               <div className="mb-4 flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-white">
-                  Cart Items ({items.reduce((total, item) => total + item.quantity, 0)})
+                  {t('cart.items')} ({items.reduce((total, item) => total + item.quantity, 0)})
                 </h2>
                 <button 
                   onClick={clearCart}
                   className="text-red-400 hover:text-red-300 text-sm flex items-center"
                 >
                   <Trash2 size={16} className="mr-1" />
-                  Clear Cart
+                  {t('cart.clear')}
                 </button>
               </div>
               
@@ -90,7 +92,7 @@ const CartPage: React.FC = () => {
                       <button 
                         onClick={() => removeFromCart(item.id)}
                         className="ml-4 text-red-400 hover:text-red-300"
-                        aria-label="Remove item"
+                        aria-label={t('cart.remove')}
                       >
                         <Trash2 size={18} />
                       </button>
@@ -104,23 +106,23 @@ const CartPage: React.FC = () => {
           {/* Order Summary */}
           <div>
             <div className="bg-gray-800 rounded-xl p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-white mb-6">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-white mb-6">{t('cart.summary.title')}</h2>
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-300">
-                  <span>Subtotal</span>
+                  <span>{t('cart.summary.subtotal')}</span>
                   <span>{(totalPrice * 0.9).toFixed(2)} ETH</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>Shipping</span>
+                  <span>{t('cart.summary.shipping')}</span>
                   <span>{(totalPrice * 0.05).toFixed(2)} ETH</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>Tax</span>
+                  <span>{t('cart.summary.tax')}</span>
                   <span>{(totalPrice * 0.05).toFixed(2)} ETH</span>
                 </div>
                 <div className="border-t border-gray-700 pt-3 flex justify-between font-bold text-white">
-                  <span>Total</span>
+                  <span>{t('cart.summary.total')}</span>
                   <span>{totalPrice.toFixed(4)} ETH</span>
                 </div>
               </div>
@@ -130,7 +132,7 @@ const CartPage: React.FC = () => {
                   to="/checkout" 
                   className="btn btn-primary w-full flex items-center justify-center"
                 >
-                  <span>Proceed to Checkout</span>
+                  <span>{t('cart.checkout')}</span>
                   <ArrowRight size={18} className="ml-2" />
                 </Link>
               ) : (
@@ -138,7 +140,7 @@ const CartPage: React.FC = () => {
                   onClick={connect}
                   className="btn btn-primary w-full flex items-center justify-center"
                 >
-                  Connect Wallet to Checkout
+                  {t('cart.connect')}
                 </button>
               )}
               
@@ -146,7 +148,7 @@ const CartPage: React.FC = () => {
                 to="/products" 
                 className="mt-4 block text-center text-blue-400 hover:text-blue-300"
               >
-                Continue Shopping
+                {t('cart.continue')}
               </Link>
             </div>
           </div>

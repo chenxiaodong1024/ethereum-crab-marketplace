@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Github, Twitter, Instagram, Facebook } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -13,10 +16,10 @@ const Footer: React.FC = () => {
               <span className="text-accent-500">
                 <ShoppingCart size={24} className="inline-block mr-2" />
               </span>
-              <span className="text-xl font-bold text-white">Crab Emporium</span>
+              <span className="text-xl font-bold text-white">{t('footer.brand.title')}</span>
             </Link>
             <p className="text-gray-400 mb-4">
-              The premier marketplace for premium crab products, powered by blockchain technology.
+              {t('footer.brand.desc')}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -36,26 +39,26 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('footer.quickLinks.title')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-400 hover:text-white transition-colors">
-                  Home
+                  {t('footer.quickLinks.home')}
                 </Link>
               </li>
               <li>
                 <Link to="/products" className="text-gray-400 hover:text-white transition-colors">
-                  Products
+                  {t('footer.quickLinks.products')}
                 </Link>
               </li>
               <li>
                 <Link to="/cart" className="text-gray-400 hover:text-white transition-colors">
-                  Cart
+                  {t('footer.quickLinks.cart')}
                 </Link>
               </li>
               <li>
                 <Link to="/account" className="text-gray-400 hover:text-white transition-colors">
-                  My Account
+                  {t('footer.quickLinks.account')}
                 </Link>
               </li>
             </ul>
@@ -63,26 +66,26 @@ const Footer: React.FC = () => {
 
           {/* Information */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Information</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('footer.information.title')}</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  About Us
+                  {t('footer.information.about')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Shipping Policy
+                  {t('footer.information.shipping')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Privacy Policy
+                  {t('footer.information.privacy')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Terms & Conditions
+                  {t('footer.information.terms')}
                 </a>
               </li>
             </ul>
@@ -90,29 +93,29 @@ const Footer: React.FC = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Contact Us</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">{t('footer.contact.title')}</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>1234 Crab Avenue</li>
-              <li>Ocean City, OC 98765</li>
-              <li>support@crabemporium.com</li>
-              <li>+1 (123) 456-7890</li>
+              <li>{t('footer.contact.address')}</li>
+              <li>{t('footer.contact.city')}</li>
+              <li>{t('footer.contact.email')}</li>
+              <li>{t('footer.contact.phone')}</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Crab Emporium. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('footer.brand.title')}. {t('footer.rights')}
           </p>
           <div className="flex space-x-6">
             <a href="#" className="text-gray-500 hover:text-gray-400 text-sm">
-              Privacy Policy
+              {t('footer.policies.privacy')}
             </a>
             <a href="#" className="text-gray-500 hover:text-gray-400 text-sm">
-              Terms of Service
+              {t('footer.policies.terms')}
             </a>
             <a href="#" className="text-gray-500 hover:text-gray-400 text-sm">
-              Cookie Policy
+              {t('footer.policies.cookies')}
             </a>
           </div>
         </div>

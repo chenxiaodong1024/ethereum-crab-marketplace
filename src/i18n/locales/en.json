@@ -5,7 +5,8 @@
     "account": "Account",
     "cart": "Cart",
     "connect": "Connect Wallet",
-    "connecting": "Connecting..."
+    "connecting": "Connecting...",
+    "brand": "Crab Emporium"
   },
   "footer": {
     "brand": {
@@ -69,7 +70,15 @@
     },
     "showing": "Showing",
     "products": "products",
-    "product": "product"
+    "product": "product",
+    "addToCart": "Add to Cart",
+    "lowStock": "Low Stock",
+    "featured": "Featured",
+    "origin": "Origin",
+    "weight": "Weight",
+    "stock": "Stock",
+    "available": "available",
+    "quantity": "Quantity"
   },
   "cart": {
     "empty": {
@@ -89,56 +98,42 @@
     },
     "checkout": "Proceed to Checkout",
     "connect": "Connect Wallet to Checkout",
-    "continue": "Continue Shopping"
+    "continue": "Continue Shopping",
+    "quantity": "Quantity",
+    "remove": "Remove item"
   },
-  "hero": {
-    "title": "Premium Crabs on the Blockchain",
-    "subtitle": "Fresh from Hongze Lake, now on the blockchain! 🦀",
-    "shopNow": "Shop Now",
-    "connectWallet": "Connect Wallet"
-  },
-  "features": {
-    "quality": {
-      "title": "Premium Quality",
-      "desc": "Selected premium crabs"
+  "account": {
+    "title": "My Account",
+    "wallet": {
+      "connected": "Connected Wallet",
+      "network": "Network",
+      "disconnect": "Disconnect Wallet",
+      "connect": "Connect Your Wallet",
+      "connectDesc": "Please connect your wallet to view your account details and order history."
     },
-    "fresh": {
-      "title": "Fresh Delivery",
-      "desc": "Direct from source"
+    "orders": {
+      "title": "Order History",
+      "empty": {
+        "title": "No Orders Yet",
+        "desc": "You haven't placed any orders yet.",
+        "action": "Browse Products"
+      },
+      "id": "Order ID",
+      "date": "Placed on",
+      "status": "Status",
+      "total": "Total",
+      "items": "Items",
+      "details": "View Order Details"
     },
-    "delivery": {
-      "title": "Fast Shipping",
-      "desc": "24-hour delivery"
-    },
-    "certified": {
-      "title": "Certified",
-      "desc": "Blockchain verified"
+    "profile": {
+      "title": "Profile Information",
+      "personal": "Personal Information",
+      "fullName": "Full Name",
+      "email": "Email Address",
+      "memberSince": "Member Since",
+      "walletAddress": "Wallet Address",
+      "shipping": "Shipping Address",
+      "edit": "Edit Profile"
     }
-  },
-  "featured": {
-    "title": "Today's Featured 🦀",
-    "desc": "Each crab comes with blockchain certification, guaranteeing authenticity!",
-    "viewAll": "View All Products"
-  },
-  "why": {
-    "title": "Why Choose Us?",
-    "desc": "Blockchain technology ensures the quality of every crab! 🌊",
-    "traceability": {
-      "title": "Traceability",
-      "desc": "Each crab has a unique blockchain ID"
-    },
-    "security": {
-      "title": "Secure Transaction",
-      "desc": "Safe blockchain payment"
-    },
-    "speed": {
-      "title": "Fast Delivery",
-      "desc": "24-hour delivery guaranteed"
-    }
-  },
-  "cta": {
-    "title": "Ready to enjoy? 🦀",
-    "desc": "Connect your wallet and buy authentic Hongze Lake crabs!",
-    "buyNow": "Buy Now"
   }
 }
