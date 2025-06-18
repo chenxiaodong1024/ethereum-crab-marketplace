@@ -174,15 +174,56 @@ function MyOrdersOnChain({ account, isConnected }: { account: string | null, isC
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(0);
+  const { t } = useTranslation();
+  
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || !account) return;
     async function fetchOrders() {
       setLoading(true);
       try {
         const contract = getCrabContract();
-        const result = await contract.getMyOrders();
-        setOrders(result);
+        
+        // 获取所有订单，然后过滤出当前用户的订单
+        const nextOrderId = await contract.nextOrderId();
+        const orderPromises = [];
+        for (let i = 1; i < nextOrderId; i++) {
+          orderPromises.push(contract.orders(i));
+        }
+        const allOrders = await Promise.all(orderPromises);
+        
+        // 过滤出当前用户的订单
+        const myOrders = allOrders.filter((order: any) => 
+          order.buyer.toLowerCase() === account!.toLowerCase()
+        );
+        
+        // 获取商品信息
+        const giftBoxIds = Array.from(new Set(myOrders.map((order: any) => order.giftBoxId.toString())));
+        const giftBoxMap: Record<string, any> = {};
+        await Promise.all(giftBoxIds.map(async (id) => {
+          try {
+            const box = await contract.giftBoxes(id);
+            giftBoxMap[id] = box;
+          } catch {
+            giftBoxMap[id] = null;
+          }
+        }));
+        
+        // 格式化订单数据
+        const formattedOrders = myOrders.map((order: any) => ({
+          ...order,
+          orderId: order.orderId?.toString(),
+          giftBoxId: order.giftBoxId?.toString(),
+          quantity: order.quantity?.toString(),
+          totalAmount: order.totalAmount,
+          timestamp: order.timestamp.toNumber() * 1000,
+          giftBoxName: giftBoxMap[order.giftBoxId?.toString()]?.name || 'N/A',
+          status: order.status ?? 0,
+          refundAmount: order.refundAmount
+        }));
+        
+        setOrders(formattedOrders);
       } catch (e) {
+        console.error('Error fetching orders:', e);
         setOrders([]);
       }
       setLoading(false);
@@ -197,14 +238,15 @@ function MyOrdersOnChain({ account, isConnected }: { account: string | null, isC
       const tx = await contract.requestRefund(orderId);
       await tx.wait();
       setRefreshFlag(f => f + 1);
-    } catch (e) {
-      alert('申请退款失败: ' + (e && e.message ? e.message : e));
+    } catch (e: any) {
+      alert('申请退款失败: ' + (e && e.message ? e.message : String(e)));
     }
   };
 
   if (!isConnected) return <div>请先连接钱包</div>;
   if (loading) return <div>加载中...</div>;
   if (!orders || orders.length === 0) return <div>暂无链上订单</div>;
+  
   return (
     <div className="space-y-4">
       {orders.map(order => (
@@ -212,15 +254,16 @@ function MyOrdersOnChain({ account, isConnected }: { account: string | null, isC
           <div className="flex flex-wrap justify-between items-start mb-4">
             <div>
               <h3 className="text-white font-medium">订单ID: {order.orderId.toString()}</h3>
+              <p className="text-sm text-gray-400">商品: {order.giftBoxName}</p>
               <p className="text-sm text-gray-400">商品ID: {order.giftBoxId.toString()}</p>
               <p className="text-sm text-gray-400">数量: {order.quantity.toString()}</p>
-              <p className="text-sm text-gray-400">金额: {Number(order.totalAmount) / 1e18} ETH</p>
+              <p className="text-sm text-gray-400">金额: {Number(ethers.utils.formatUnits(order.totalAmount, 6))} USDC</p>
               <p className="text-sm text-gray-400">收货信息: {order.shippingInfo}</p>
-              <p className="text-sm text-gray-400">下单时间: {new Date(Number(order.timestamp) * 1000).toLocaleString()}</p>
-              {order.fulfilled && order.trackingNumber && (
+              <p className="text-sm text-gray-400">下单时间: {new Date(order.timestamp).toLocaleString()}</p>
+              {order.trackingNumber && (
                 <p className="text-sm text-blue-400 mt-1">快递单号: {order.trackingNumber}</p>
               )}
-              <p className="text-sm text-gray-400">状态: {statusMap[order.status]}</p>
+              <p className="text-sm text-gray-400">状态: {statusMap[order.status as keyof typeof statusMap]}</p>
               {/* 仅待发货可申请退款 */}
               {order.status === 0 && (
                 <button
@@ -231,14 +274,14 @@ function MyOrdersOnChain({ account, isConnected }: { account: string | null, isC
                 </button>
               )}
               {order.status === 3 && order.refundAmount && (
-                <p className="text-sm text-yellow-400 mt-1">退款金额: {ethers.utils.formatEther(order.refundAmount)} ETH</p>
+                <p className="text-sm text-yellow-400 mt-1">退款金额: {ethers.utils.formatUnits(order.refundAmount, 6)} USDC</p>
               )}
             </div>
             <div className="text-right">
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${order.fulfilled ? 'bg-green-900/30 text-green-400' : 'bg-blue-900/30 text-blue-400'}`}>
-                {order.fulfilled ? '已发货' : '未发货'}
+              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${order.trackingNumber ? 'bg-green-900/30 text-green-400' : 'bg-blue-900/30 text-blue-400'}`}>
+                {order.trackingNumber ? '已发货' : '未发货'}
               </span>
-              <p className="text-xs text-gray-400 mt-2">{order.fulfilled ? '订单已发货，等待收货' : '订单待发货'}</p>
+              <p className="text-xs text-gray-400 mt-2">{order.trackingNumber ? '订单已发货，等待收货' : '订单待发货'}</p>
             </div>
           </div>
         </div>
