@@ -34,7 +34,7 @@ A decentralized marketplace for authentic Hongze Lake crabs, powered by Ethereum
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ethereum-crab-marketplace.git
+git clone https://github.com/chenxiaodong1024/ethereum-crab-marketplace.git
 
 # Navigate to project directory
 cd ethereum-crab-marketplace
