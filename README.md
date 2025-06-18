@@ -152,7 +152,7 @@ The marketplace uses a custom smart contract (`CrabUSDC.sol`) that handles:
 - **Sepolia 测试网** (测试环境)
 - **本地开发** (Hardhat/Ganache)
 
-## �� Screenshots | 截图
+## 📱 Screenshots | 截图
 
 ### 🏠 Homepage | 首页
 ![Homepage](docs/images/首页.png)
@@ -169,20 +169,6 @@ The marketplace uses a custom smart contract (`CrabUSDC.sol`) that handles:
 
 ### 🏪 Seller Center | 卖家中心
 ![Seller Center](docs/images/卖家中心.png)
-
-## 🤝 Contributing | 贡献
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-1. Fork 该仓库
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 打开 Pull Request
 
 ## 📄 License | 许可证
 
