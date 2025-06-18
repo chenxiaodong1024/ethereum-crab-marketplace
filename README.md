@@ -152,9 +152,23 @@ The marketplace uses a custom smart contract (`CrabUSDC.sol`) that handles:
 - **Sepolia 测试网** (测试环境)
 - **本地开发** (Hardhat/Ganache)
 
-## 📱 Screenshots | 截图
+## �� Screenshots | 截图
 
-[Add screenshots of your marketplace here | 在此添加市场截图]
+### 🏠 Homepage | 首页
+![Homepage](docs/images/首页.png)
+
+### 🦀 Products Page | 商品列表
+![Products Page](docs/images/商品列表.png)
+
+### 🛒 Checkout Process | 下单流程
+![Checkout Address](docs/images/下单地址.png)
+![Order Result](docs/images/下单结果.png)
+
+### 👤 User Account | 用户中心
+![Buyer Orders](docs/images/买家订单记录.png)
+
+### 🏪 Seller Center | 卖家中心
+![Seller Center](docs/images/卖家中心.png)
 
 ## 🤝 Contributing | 贡献
 
