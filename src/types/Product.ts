@@ -9,7 +9,6 @@ export interface Product {
   origin: string;
   stock: number;
   featured: boolean;
-  ethPrice?: number;
 }
 
 export interface ProductFilter {

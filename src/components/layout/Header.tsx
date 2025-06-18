@@ -5,6 +5,8 @@ import { useWeb3 } from '../../contexts/Web3Context';
 import { useCart } from '../../contexts/CartContext';
 import { ShoppingCart, Wallet, Menu, X, ChevronDown } from 'lucide-react';
 import LanguageSwitch from '../LanguageSwitch';
+import { getCrabContract } from '../../utils/contract';
+import { ethers } from 'ethers';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -14,6 +16,26 @@ const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+
+  // 检查是否是合约所有者
+  useEffect(() => {
+    const checkOwner = async () => {
+      if (isConnected && account) {
+        try {
+          const contract = getCrabContract();
+          const owner = await contract.owner();
+          setIsOwner(account.toLowerCase() === owner.toLowerCase());
+        } catch (error) {
+          console.error('Error checking owner:', error);
+          setIsOwner(false);
+        }
+      } else {
+        setIsOwner(false);
+      }
+    };
+    checkOwner();
+  }, [isConnected, account]);
 
   // Format account address
   const formatAccount = (account: string) => {
@@ -65,6 +87,11 @@ const Header: React.FC = () => {
             <Link to="/account" className={`nav-link ${location.pathname === '/account' ? 'nav-link-active' : ''}`}>
               {t('header.account')}
             </Link>
+            {isOwner && (
+              <Link to="/seller" className={`nav-link ${location.pathname === '/seller' ? 'nav-link-active' : ''}`}>
+                {t('header.seller')}
+              </Link>
+            )}
           </nav>
 
           {/* User Actions (Desktop) */}
@@ -90,67 +117,58 @@ const Header: React.FC = () => {
                   <span>{formatAccount(account || '')}</span>
                   <ChevronDown size={16} />
                 </button>
-                
+
                 {accountMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 divide-y divide-gray-700">
-                    <div className="px-4 py-3">
-                      <p className="text-sm text-gray-400">Connected to</p>
-                      <p className="text-sm font-medium text-blue-400">{networkName}</p>
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg py-2 z-50">
+                    <div className="px-4 py-2 text-sm text-gray-400">
+                      {networkName}
                     </div>
-                    <div className="py-1">
+                    <Link 
+                      to="/account" 
+                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                      onClick={() => setAccountMenuOpen(false)}
+                    >
+                      {t('header.account')}
+                    </Link>
+                    {isOwner && (
                       <Link 
-                        to="/account" 
+                        to="/seller" 
                         className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                         onClick={() => setAccountMenuOpen(false)}
                       >
-                        {t('header.account')}
+                        {t('header.seller')}
                       </Link>
-                      <button
-                        className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
-                        onClick={() => {
-                          disconnect();
-                          setAccountMenuOpen(false);
-                        }}
-                      >
-                        Disconnect Wallet
-                      </button>
-                    </div>
+                    )}
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300"
+                      onClick={() => {
+                        disconnect();
+                        setAccountMenuOpen(false);
+                      }}
+                    >
+                      {t('header.disconnect')}
+                    </button>
                   </div>
                 )}
               </div>
             ) : (
-              <button 
-                className={`flex items-center space-x-2 ${
-                  isConnecting 
-                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                } px-4 py-2 rounded-lg transition-all`}
+              <button
                 onClick={connect}
                 disabled={isConnecting}
+                className="btn bg-blue-600/30 hover:bg-blue-600/50 text-blue-200 px-4 py-2 rounded-lg transition-colors border border-blue-500/50"
               >
-                <Wallet size={18} />
-                <span>{isConnecting ? t('header.connecting') : t('header.connect')}</span>
+                {isConnecting ? t('header.connecting') : t('header.connect')}
               </button>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center space-x-4 md:hidden">
-            <Link to="/cart" className="relative p-2 text-gray-300 hover:text-white transition-colors">
-              <ShoppingCart size={24} />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent-500 text-black text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-            <button
-              className="text-gray-300 hover:text-white"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
+          <button
+            className="md:hidden p-2 text-gray-300 hover:text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
@@ -180,37 +198,31 @@ const Header: React.FC = () => {
             >
               {t('header.account')}
             </Link>
+            {isOwner && (
+              <Link 
+                to="/seller" 
+                className={`block py-2 ${location.pathname === '/seller' ? 'text-blue-400' : 'text-gray-300'}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('header.seller')}
+              </Link>
+            )}
             
             {/* Mobile Wallet Connection */}
             {isConnected ? (
-              <div className="border-t border-gray-700 pt-4">
-                <div className="flex items-center space-x-2 text-blue-400 mb-2">
-                  <Wallet size={18} />
-                  <span className="font-medium">{formatAccount(account || '')}</span>
-                </div>
-                <p className="text-sm text-gray-400 mb-3">Connected to {networkName}</p>
-                <button
-                  className="w-full bg-red-900/30 text-red-400 border border-red-800 px-4 py-2 rounded"
-                  onClick={() => {
-                    disconnect();
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  Disconnect Wallet
-                </button>
-              </div>
+              <button
+                onClick={disconnect}
+                className="block w-full text-left py-2 text-red-400"
+              >
+                {t('header.disconnect')}
+              </button>
             ) : (
-              <button 
-                className={`w-full flex items-center justify-center space-x-2 ${
-                  isConnecting 
-                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                } px-4 py-3 rounded-lg transition-all mt-4`}
+              <button
                 onClick={connect}
                 disabled={isConnecting}
+                className="block w-full text-left py-2 text-gray-300"
               >
-                <Wallet size={18} />
-                <span>{isConnecting ? t('header.connecting') : t('header.connect')}</span>
+                {isConnecting ? t('header.connecting') : t('header.connect')}
               </button>
             )}
           </div>

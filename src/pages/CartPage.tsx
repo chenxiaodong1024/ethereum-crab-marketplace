@@ -27,6 +27,11 @@ const CartPage: React.FC = () => {
     );
   }
 
+  const subtotalUSDC = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shippingUSDC = 0;
+  const taxUSDC = 0;
+  const totalUSDC = subtotalUSDC;
+
   return (
     <div className="pt-24 pb-16">
       <div className="container">
@@ -38,14 +43,14 @@ const CartPage: React.FC = () => {
             <div className="bg-gray-800 rounded-xl p-6">
               <div className="mb-4 flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-white">
-                  {t('cart.items')} ({items.reduce((total, item) => total + item.quantity, 0)})
+                  {t('cart.cartItems')} ({items.reduce((total, item) => total + item.quantity, 0)})
                 </h2>
                 <button 
                   onClick={clearCart}
                   className="text-red-400 hover:text-red-300 text-sm flex items-center"
                 >
                   <Trash2 size={16} className="mr-1" />
-                  {t('cart.clear')}
+                  {t('cart.emptyCart')}
                 </button>
               </div>
               
@@ -64,9 +69,9 @@ const CartPage: React.FC = () => {
                     {/* Product Details */}
                     <div className="flex-grow sm:ml-4">
                       <h3 className="text-white font-medium">{item.name}</h3>
-                      <p className="text-gray-400 text-sm mb-2">{item.weight}</p>
+                      <p className="text-gray-400 text-sm mb-2">{t('cart.weight')}: {item.weight}</p>
                       <div className="flex items-baseline">
-                        <span className="text-white font-bold">{item.ethPrice} ETH</span>
+                        <span className="text-white font-bold">{item.price} USDC</span>
                         <span className="text-gray-400 text-sm ml-2">(${item.price.toFixed(2)})</span>
                       </div>
                     </div>
@@ -76,6 +81,7 @@ const CartPage: React.FC = () => {
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="bg-gray-700 hover:bg-gray-600 text-white p-1 rounded-l-md"
+                        aria-label={t('cart.updateQuantity')}
                       >
                         <Minus size={16} />
                       </button>
@@ -85,6 +91,7 @@ const CartPage: React.FC = () => {
                       <button 
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="bg-gray-700 hover:bg-gray-600 text-white p-1 rounded-r-md"
+                        aria-label={t('cart.updateQuantity')}
                       >
                         <Plus size={16} />
                       </button>
@@ -92,7 +99,7 @@ const CartPage: React.FC = () => {
                       <button 
                         onClick={() => removeFromCart(item.id)}
                         className="ml-4 text-red-400 hover:text-red-300"
-                        aria-label={t('cart.remove')}
+                        aria-label={t('cart.removeItem')}
                       >
                         <Trash2 size={18} />
                       </button>
@@ -106,24 +113,24 @@ const CartPage: React.FC = () => {
           {/* Order Summary */}
           <div>
             <div className="bg-gray-800 rounded-xl p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-white mb-6">{t('cart.summary.title')}</h2>
+              <h2 className="text-xl font-semibold text-white mb-6">{t('cart.orderSummary')}</h2>
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-300">
-                  <span>{t('cart.summary.subtotal')}</span>
-                  <span>{(totalPrice * 0.9).toFixed(2)} ETH</span>
+                  <span>{t('cart.subtotal')}</span>
+                  <span>{subtotalUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>{t('cart.summary.shipping')}</span>
-                  <span>{(totalPrice * 0.05).toFixed(2)} ETH</span>
+                  <span>{t('cart.shippingFee')}</span>
+                  <span>{shippingUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>{t('cart.summary.tax')}</span>
-                  <span>{(totalPrice * 0.05).toFixed(2)} ETH</span>
+                  <span>{t('cart.taxFee')}</span>
+                  <span>{taxUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="border-t border-gray-700 pt-3 flex justify-between font-bold text-white">
-                  <span>{t('cart.summary.total')}</span>
-                  <span>{totalPrice.toFixed(4)} ETH</span>
+                  <span>{t('cart.totalAmount')}</span>
+                  <span>{totalUSDC.toFixed(2)} USDC</span>
                 </div>
               </div>
               
@@ -132,7 +139,7 @@ const CartPage: React.FC = () => {
                   to="/checkout" 
                   className="btn btn-primary w-full flex items-center justify-center"
                 >
-                  <span>{t('cart.checkout')}</span>
+                  <span>{t('cart.checkoutButton')}</span>
                   <ArrowRight size={18} className="ml-2" />
                 </Link>
               ) : (
@@ -148,7 +155,7 @@ const CartPage: React.FC = () => {
                 to="/products" 
                 className="mt-4 block text-center text-blue-400 hover:text-blue-300"
               >
-                {t('cart.continue')}
+                {t('cart.continueShopping')}
               </Link>
             </div>
           </div>

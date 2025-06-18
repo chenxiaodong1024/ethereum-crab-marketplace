@@ -1,13 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Anchor, Award, ShoppingBag, Truck, Shell, Fish, Waves, Grab as Crab } from 'lucide-react';
 import ProductCard from '../components/products/ProductCard';
 import { getFeaturedProducts } from '../data/products';
 import { useWeb3 } from '../contexts/Web3Context';
+import { useTranslation } from 'react-i18next';
+import { Product } from '../types/Product';
 
 const HomePage: React.FC = () => {
-  const featuredProducts = getFeaturedProducts();
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { connect, isConnected } = useWeb3();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const products = await getFeaturedProducts();
+        setFeaturedProducts(products);
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <div>
@@ -44,21 +63,21 @@ const HomePage: React.FC = () => {
             <Crab size={64} className="text-accent-500 animate-bounce" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-wave font-display">
-            洪泽湖大闸蟹
-            <span className="text-accent-500 block mt-2">区块链直供！</span>
+            {t('home.hero.title')}
+            <span className="text-accent-500 block mt-2">{t('home.hero.subtitle')}</span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-200 mb-8 max-w-3xl mx-auto">
-            🦀 来自洪泽湖的鲜美大闸蟹，现在在区块链上！ 🌊
+            {t('home.hero.description')}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/products" className="btn bg-accent-500 hover:bg-accent-600 text-gray-900 font-bold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-accent-500/50">
               <ShoppingBag className="mr-2" size={20} />
-              立即选购
+              {t('home.hero.shopNow')}
             </Link>
             {!isConnected && (
               <button onClick={connect} className="btn bg-blue-600/80 hover:bg-blue-700 text-white backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
                 <Shell className="mr-2" size={20} />
-                连接钱包
+                {t('header.connect')}
               </button>
             )}
           </div>
@@ -68,29 +87,29 @@ const HomePage: React.FC = () => {
               <div className="flex justify-center mb-4">
                 <Shell className="text-accent-500" size={40} />
               </div>
-              <h3 className="font-bold text-white text-lg">优质品质</h3>
-              <p className="text-blue-200 text-sm mt-2">精选上等大闸蟹</p>
+              <h3 className="font-bold text-white text-lg">{t('home.features.quality.title')}</h3>
+              <p className="text-blue-200 text-sm mt-2">{t('home.features.quality.desc')}</p>
             </div>
             <div className="glass-card p-6 rounded-xl transform hover:scale-105 transition-all duration-300">
               <div className="flex justify-center mb-4">
                 <Fish className="text-accent-500" size={40} />
               </div>
-              <h3 className="font-bold text-white text-lg">新鲜直达</h3>
-              <p className="text-blue-200 text-sm mt-2">产地直接发货</p>
+              <h3 className="font-bold text-white text-lg">{t('home.features.fresh.title')}</h3>
+              <p className="text-blue-200 text-sm mt-2">{t('home.features.fresh.desc')}</p>
             </div>
             <div className="glass-card p-6 rounded-xl transform hover:scale-105 transition-all duration-300">
               <div className="flex justify-center mb-4">
                 <Truck className="text-accent-500" size={40} />
               </div>
-              <h3 className="font-bold text-white text-lg">快速配送</h3>
-              <p className="text-blue-200 text-sm mt-2">24小时内送达</p>
+              <h3 className="font-bold text-white text-lg">{t('home.features.delivery.title')}</h3>
+              <p className="text-blue-200 text-sm mt-2">{t('home.features.delivery.desc')}</p>
             </div>
             <div className="glass-card p-6 rounded-xl transform hover:scale-105 transition-all duration-300">
               <div className="flex justify-center mb-4">
                 <Award className="text-accent-500" size={40} />
               </div>
-              <h3 className="font-bold text-white text-lg">品质认证</h3>
-              <p className="text-blue-200 text-sm mt-2">区块链溯源</p>
+              <h3 className="font-bold text-white text-lg">{t('home.features.certification.title')}</h3>
+              <p className="text-blue-200 text-sm mt-2">{t('home.features.certification.desc')}</p>
             </div>
           </div>
         </div>
@@ -104,26 +123,34 @@ const HomePage: React.FC = () => {
         <div className="container relative">
           <div className="text-center mb-12">
             <Crab size={48} className="mx-auto text-accent-500 mb-4" />
-            <h2 className="text-3xl font-bold text-white mb-4 font-display">今日精选 🦀</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 font-display">{t('home.featured.title')}</h2>
             <p className="text-blue-200 max-w-2xl mx-auto">
-              每只大闸蟹都配备区块链认证，保证正品溯源！
+              {t('home.featured.description')}
             </p>
           </div>
           
-          <div className="product-grid">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          
-          <div className="text-center mt-12">
-            <Link 
-              to="/products" 
-              className="btn bg-accent-500 hover:bg-accent-600 text-gray-900 font-bold transform hover:scale-105 transition-all duration-300"
-            >
-              查看全部商品
-            </Link>
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-500"></div>
+            </div>
+          ) : (
+            <>
+              <div className="product-grid">
+                {featuredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              
+              <div className="text-center mt-12">
+                <Link 
+                  to="/products" 
+                  className="btn bg-accent-500 hover:bg-accent-600 text-gray-900 font-bold transform hover:scale-105 transition-all duration-300"
+                >
+                  {t('home.featured.viewAll')}
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -132,9 +159,9 @@ const HomePage: React.FC = () => {
         <div className="container relative">
           <div className="text-center mb-16">
             <Shell size={48} className="mx-auto text-accent-500 mb-4" />
-            <h2 className="text-3xl font-bold text-white mb-4 font-display">为什么选择我们？</h2>
+            <h2 className="text-3xl font-bold text-white mb-4 font-display">{t('home.benefits.title')}</h2>
             <p className="text-blue-200 max-w-2xl mx-auto">
-              区块链技术保证每一只大闸蟹的品质！ 🌊
+              {t('home.benefits.description')}
             </p>
           </div>
           
@@ -143,9 +170,9 @@ const HomePage: React.FC = () => {
               <div className="rounded-full bg-accent-500/20 w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Shell size={32} className="text-accent-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4 text-center">溯源保证</h3>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">{t('home.benefits.traceability.title')}</h3>
               <p className="text-blue-200 text-center">
-                每只大闸蟹都有独特的区块链ID，保证正品！
+                {t('home.benefits.traceability.description')}
               </p>
             </div>
             
@@ -153,9 +180,9 @@ const HomePage: React.FC = () => {
               <div className="rounded-full bg-accent-500/20 w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Award size={32} className="text-accent-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4 text-center">安全交易</h3>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">{t('home.benefits.security.title')}</h3>
               <p className="text-blue-200 text-center">
-                区块链支付，安全可靠！
+                {t('home.benefits.security.description')}
               </p>
             </div>
             
@@ -163,9 +190,9 @@ const HomePage: React.FC = () => {
               <div className="rounded-full bg-accent-500/20 w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Truck size={32} className="text-accent-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-4 text-center">极速配送</h3>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">{t('home.benefits.delivery.title')}</h3>
               <p className="text-blue-200 text-center">
-                下单后24小时内送达，保证新鲜！
+                {t('home.benefits.delivery.description')}
               </p>
             </div>
           </div>
@@ -184,10 +211,10 @@ const HomePage: React.FC = () => {
         <div className="container relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-6 font-display">
-              准备好享受美味了吗？ 🦀
+              {t('home.cta.title')}
             </h2>
             <p className="text-xl text-gray-800 mb-8">
-              连接钱包，立即购买正宗洪泽湖大闸蟹！
+              {t('home.cta.description')}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link 
@@ -195,15 +222,15 @@ const HomePage: React.FC = () => {
                 className="btn bg-gray-900 hover:bg-gray-800 text-white transform hover:scale-105 transition-all duration-300"
               >
                 <ShoppingBag size={20} className="mr-2" />
-                立即购买
+                {t('home.cta.shopNow')}
               </Link>
               {!isConnected && (
                 <button 
                   onClick={connect} 
-                  className="btn bg-white hover:bg-gray-100 text-gray-900 transform hover:scale-105 transition-all duration-300"
+                  className="btn bg-gray-900 hover:bg-gray-800 text-white transform hover:scale-105 transition-all duration-300"
                 >
                   <Shell size={20} className="mr-2" />
-                  连接钱包
+                  {t('header.connect')}
                 </button>
               )}
             </div>

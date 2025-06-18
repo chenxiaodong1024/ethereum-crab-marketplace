@@ -1,144 +1,205 @@
 import { Product } from '../types/Product';
+import { ethers } from 'ethers';
+import CrabUSDCABI from '../contracts/CrabUSDC.json';
+import { BUSINESS_LOGIC_ADDRESS } from '../utils/contract';
 
-export const products: Product[] = [
+// 本地商品基础数据
+const localProducts = [
   {
     id: 1,
-    name: '洪泽湖公蟹',
-    description: '精选洪泽湖大闸蟹，肉质鲜美，蟹黄饱满。公蟹个大体肥，是秋季美味的不二之选。',
-    price: 79.99,
-    ethPrice: 0.032,
-    image: 'https://images.pexels.com/photos/10875319/pexels-photo-10875319.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'king',
-    weight: '200-250g',
+    name: '全母套餐 2.0两 8只装',
+    description: '精选洪泽湖大闸蟹，全母蟹套餐，每只2.0两，8只装。蟹黄饱满，口感细腻。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '2.0两/只',
     origin: '江苏洪泽湖',
-    stock: 25,
     featured: true
   },
   {
     id: 2,
-    name: '洪泽湖母蟹',
-    description: '精选洪泽湖大闸蟹，蟹膏丰腴，蟹黄金黄。母蟹蟹膏丰富，是秋季送礼的绝佳选择。',
-    price: 49.99,
-    ethPrice: 0.02,
-    image: 'https://images.pexels.com/photos/13409375/pexels-photo-13409375.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'dungeness',
-    weight: '150-200g',
+    name: '全母套餐 2.5两 8只装',
+    description: '精选洪泽湖大闸蟹，全母蟹套餐，每只2.5两，8只装。蟹黄丰腴，品质上乘。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '2.5两/只',
     origin: '江苏洪泽湖',
-    stock: 40,
     featured: true
   },
   {
     id: 3,
-    name: '阳澄湖大闸蟹',
-    description: '正宗阳澄湖大闸蟹，肉质细腻，蟹膏浓郁。严选品质，保证每一只都是上等佳品。',
-    price: 39.99,
-    ethPrice: 0.016,
-    image: 'https://images.pexels.com/photos/2254030/pexels-photo-2254030.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'blue',
-    weight: '150-200g',
-    origin: '江苏阳澄湖',
-    stock: 60,
-    featured: false
+    name: '全公套餐 3.0公 8只装',
+    description: '精选洪泽湖大闸蟹，全公蟹套餐，每只3.0两，8只装。肉质饱满，蟹膏丰富。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '3.0两/只',
+    origin: '江苏洪泽湖',
+    featured: true
   },
   {
     id: 4,
-    name: '太湖母蟹',
-    description: '精选太湖大闸蟹，蟹黄饱满，口感细腻。每只蟹都经过严格挑选，确保品质。',
-    price: 54.99,
-    ethPrice: 0.022,
-    image: 'https://images.pexels.com/photos/566344/pexels-photo-566344.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'snow',
-    weight: '150-200g',
-    origin: '江苏太湖',
-    stock: 35,
+    name: '全公套餐 3.5公 8只装',
+    description: '精选洪泽湖大闸蟹，全公蟹套餐，每只3.5两，8只装。个大肉肥，蟹膏浓郁。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '3.5两/只',
+    origin: '江苏洪泽湖',
     featured: true
   },
   {
     id: 5,
-    name: '固城湖公蟹',
-    description: '优质固城湖大闸蟹，个大体肥，蟹黄丰富。秋季品蟹的绝佳选择。',
-    price: 64.99,
-    ethPrice: 0.026,
-    image: 'https://images.pexels.com/photos/11030358/pexels-photo-11030358.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'stone',
-    weight: '200-250g',
-    origin: '江苏固城湖',
-    stock: 20,
+    name: '全母套餐 3.0两 8只装',
+    description: '精选洪泽湖大闸蟹，全母蟹套餐，每只3.0两，8只装。蟹黄浓郁，肉质鲜美。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '3.0两/只',
+    origin: '江苏洪泽湖',
     featured: false
   },
   {
     id: 6,
-    name: '高淳湖大闸蟹',
-    description: '精选高淳湖大闸蟹，肉质鲜美，营养丰富。严格把控品质，保证新鲜送达。',
-    price: 59.99,
-    ethPrice: 0.024,
-    image: 'https://images.pexels.com/photos/566345/pexels-photo-566345.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'soft-shell',
-    weight: '150-200g',
-    origin: '江苏高淳',
-    stock: 15,
+    name: '公母对半套餐 3公+2母 8只装',
+    description: '精选洪泽湖大闸蟹，公母对半套餐，3两公蟹+2两母蟹，共8只装。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '3两公+2两母',
+    origin: '江苏洪泽湖',
     featured: false
   },
   {
     id: 7,
-    name: '长荡湖大闸蟹',
-    description: '优质长荡湖大闸蟹，蟹膏丰美，口感一流。每只蟹都是精挑细选的佳品。',
-    price: 44.99,
-    ethPrice: 0.018,
-    image: 'https://images.pexels.com/photos/8969237/pexels-photo-8969237.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'jonah',
-    weight: '150-200g',
-    origin: '江苏长荡湖',
-    stock: 30,
+    name: '公母对半 3.5公+2.5母 8只装',
+    description: '精选洪泽湖大闸蟹，公母对半套餐，3.5两公蟹+2.5两母蟹，共8只装。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '3.5两公+2.5两母',
+    origin: '江苏洪泽湖',
     featured: false
   },
   {
     id: 8,
-    name: '金坛大闸蟹',
-    description: '精选金坛大闸蟹，蟹黄饱满，肉质鲜美。严格遵循传统养殖方式，保证品质。',
-    price: 89.99,
-    ethPrice: 0.036,
-    image: 'https://images.pexels.com/photos/15169021/pexels-photo-15169021/free-photo-of-crab-claws-on-a-plate.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
-    category: 'king',
-    weight: '200-250g',
-    origin: '江苏金坛',
-    stock: 10,
-    featured: true
+    name: '公母对半套餐 4公+3母 8只装',
+    description: '精选洪泽湖大闸蟹，公母对半套餐，4两公蟹+3两母蟹，共8只装。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '4两公+3两母',
+    origin: '江苏洪泽湖',
+    featured: false
+  },
+  {
+    id: 9,
+    name: '全公套餐 4.0公 8只装',
+    description: '精选洪泽湖大闸蟹，全公蟹套餐，每只4.0两，8只装。个大肉肥，蟹膏丰富。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '4.0两/只',
+    origin: '江苏洪泽湖',
+    featured: false
+  },
+  {
+    id: 10,
+    name: '2.8-3.2两 残公蟹3斤',
+    description: '精选洪泽湖大闸蟹，残公蟹，每只2.8-3.2两，3斤装。价格实惠，品质保证。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '2.8-3.2两/只',
+    origin: '江苏洪泽湖',
+    featured: false
+  },
+  {
+    id: 11,
+    name: '1.8-2.2两残母蟹3斤',
+    description: '精选洪泽湖大闸蟹，残母蟹，每只1.8-2.2两，3斤装。价格实惠，品质保证。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '1.8-2.2两/只',
+    origin: '江苏洪泽湖',
+    featured: false
+  },
+  {
+    id: 12,
+    name: '2母3公残蟹对半3斤',
+    description: '精选洪泽湖大闸蟹，残蟹对半，2只母蟹+3只公蟹，3斤装。价格实惠，品质保证。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/product/2024/11/11/0664015afec04a4b9a623a6aade1a2b2gypru1201b.jpg',
+    category: '洪泽湖大闸蟹',
+    weight: '2母3公',
+    origin: '江苏洪泽湖',
+    featured: false
+  },
+  {
+    id: 13,
+    name: '老头蟹3斤',
+    description: '精选洪泽湖大闸蟹，老头蟹，3斤装。价格实惠，品质保证。',
+    image: 'https://sihongpangxie.site:17778//crmebimage/public/content/2024/11/12/13e44bad186a4c9eacf54f7e2e4bbc70su1is0iq80.png',
+    category: '洪泽湖大闸蟹',
+    weight: '3斤装',
+    origin: '江苏洪泽湖',
+    featured: false
   }
 ];
 
-export const categories = [
-  { id: 'all', name: '全部大闸蟹' },
-  { id: 'king', name: '公蟹' },
-  { id: 'snow', name: '母蟹' },
-  { id: 'dungeness', name: '礼盒套装' },
-  { id: 'blue', name: '阳澄湖蟹' },
-  { id: 'stone', name: '固城湖蟹' },
-  { id: 'soft-shell', name: '高淳蟹' },
-  { id: 'jonah', name: '其他产地' }
-];
+// 从链上获取价格和库存
+export async function fetchChainData() {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(BUSINESS_LOGIC_ADDRESS, CrabUSDCABI.abi, provider);
+    
+    const nextGiftBoxId = await contract.nextGiftBoxId();
+    const chainData = new Map();
+    
+    for (let i = 1; i < nextGiftBoxId; i++) {
+      const giftBox = await contract.giftBoxes(i);
+      if (giftBox.active) {
+        chainData.set(i, {
+          price: Number(ethers.utils.formatUnits(giftBox.price, 6)),
+          stock: Number(giftBox.stock)
+        });
+      }
+    }
+    
+    return chainData;
+  } catch (error) {
+    console.error('Error fetching chain data:', error);
+    return new Map();
+  }
+}
 
-export const getProductById = (id: number): Product | undefined => {
+// 合并本地数据和链上数据
+export async function getProducts(): Promise<Product[]> {
+  const chainData = await fetchChainData();
+  
+  return localProducts.map(product => {
+    const chainInfo = chainData.get(product.id);
+    return {
+      ...product,
+      price: chainInfo?.price ?? 0,
+      stock: chainInfo?.stock ?? 0
+    };
+  });
+}
+
+// 修改其他函数以使用异步获取的数据
+export const getProductById = async (id: number): Promise<Product | undefined> => {
+  const products = await getProducts();
   return products.find(product => product.id === id);
 };
 
-export const getFeaturedProducts = (): Product[] => {
+export const getFeaturedProducts = async (): Promise<Product[]> => {
+  const products = await getProducts();
   return products.filter(product => product.featured);
 };
 
-export const filterProducts = (filters: {
+export const filterProducts = async (filters: {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
   searchTerm?: string;
-}): Product[] => {
+}): Promise<Product[]> => {
+  const products = await getProducts();
   return products.filter(product => {
-    // Filter by category
     if (filters.category && filters.category !== 'all' && product.category !== filters.category) {
       return false;
     }
     
-    // Filter by price range
     if (filters.minPrice && product.price < filters.minPrice) {
       return false;
     }
@@ -147,16 +208,20 @@ export const filterProducts = (filters: {
       return false;
     }
     
-    // Filter by search term
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase();
-      return (
-        product.name.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        product.category.toLowerCase().includes(searchLower)
-      );
+      return product.name.toLowerCase().includes(searchLower) ||
+             product.description.toLowerCase().includes(searchLower);
     }
     
     return true;
   });
 };
+
+// 保持分类数据不变
+export const categories = [
+  { id: 'all', name: '全部大闸蟹' },
+  { id: 'king', name: '公蟹' },
+  { id: 'snow', name: '母蟹' },
+  { id: 'dungeness', name: '公母对半' }
+];

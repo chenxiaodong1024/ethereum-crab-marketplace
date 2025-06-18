@@ -24,7 +24,7 @@ const Web3Context = createContext<Web3ContextType>({
   chainId: null,
   provider: null,
   signer: null,
-  contractAddress: '0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE',
+  contractAddress: '0xa85233C63b9Ee964Add6F2cffe00Fd84eb32338f',
   networkName: '',
   switchNetwork: async () => {},
 });

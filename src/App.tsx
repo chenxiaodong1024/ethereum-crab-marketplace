@@ -10,29 +10,35 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AccountPage from './pages/AccountPage';
+import SellerPage from './pages/SellerPage';
+import i18n from './i18n';
+import { I18nextProvider } from 'react-i18next';
 
 function App() {
   return (
-    <Web3Provider>
-      <CartProvider>
-        <Router>
-          <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-            <Header />
-            <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/products" element={<ProductsPage />} />
-                <Route path="/product/:id" element={<ProductDetailPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/account" element={<AccountPage />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
-      </CartProvider>
-    </Web3Provider>
+    <I18nextProvider i18n={i18n}>
+      <Web3Provider>
+        <CartProvider>
+          <Router>
+            <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+              <Header />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/product/:id" element={<ProductDetailPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/checkout" element={<CheckoutPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route path="/seller" element={<SellerPage />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          </Router>
+        </CartProvider>
+      </Web3Provider>
+    </I18nextProvider>
   );
 }
 

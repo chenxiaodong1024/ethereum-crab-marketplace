@@ -1,51 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Package, User, Wallet, ShoppingBag, LogOut, ExternalLink } from 'lucide-react';
 import { useWeb3 } from '../contexts/Web3Context';
+import { useTranslation } from 'react-i18next';
+import { getCrabContract } from '../utils/contract';
+import blockies from 'ethereum-blockies-base64';
+import { ethers } from 'ethers';
 
-// Mock order history data
-const mockOrders = [
-  {
-    id: 'ORD-2023-0001',
-    date: '2023-04-15',
-    total: '0.082 ETH',
-    status: 'Delivered',
-    items: [
-      { name: 'Alaskan King Crab', quantity: 1 },
-      { name: 'Dungeness Crab', quantity: 2 }
-    ]
-  },
-  {
-    id: 'ORD-2023-0002',
-    date: '2023-05-22',
-    total: '0.064 ETH',
-    status: 'Shipped',
-    items: [
-      { name: 'Snow Crab Clusters', quantity: 1 },
-      { name: 'Blue Crab', quantity: 1 }
-    ]
-  }
-];
+const statusMap = {
+  0: '待发货',
+  1: '已发货',
+  2: '退款申请中',
+  3: '已退款',
+  4: '退款被拒绝'
+};
 
 const AccountPage: React.FC = () => {
   const { account, isConnected, connect, disconnect, networkName } = useWeb3();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('orders');
+  const { t } = useTranslation();
   
-  // Mock user data
-  const userData = {
-    name: 'Crypto Crab Lover',
-    email: 'crab@example.com',
-    joined: 'March 2023',
-    address: {
-      street: '123 Ocean Drive',
-      city: 'Seaside',
-      state: 'CA',
-      zip: '90210',
-      country: 'USA'
-    }
-  };
-
   // Format account address
   const formatAccount = (account: string) => {
     return `${account.substring(0, 8)}...${account.substring(account.length - 6)}`;
@@ -54,18 +29,18 @@ const AccountPage: React.FC = () => {
   // If not connected, show connect screen
   if (!isConnected) {
     return (
-      <div className="container pt-32 pb-16 text-center">
-        <div className="max-w-md mx-auto">
+      <div className="flex flex-col justify-center items-center min-h-[60vh]">
+        <div className="max-w-md w-full text-center">
           <Wallet size={64} className="mx-auto text-gray-600 mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('account.wallet.connect')}</h2>
           <p className="text-gray-400 mb-6">
-            Please connect your wallet to view your account details and order history.
+            {t('account.wallet.connectDesc')}
           </p>
           <button 
             onClick={connect}
-            className="btn btn-primary"
+            className="btn btn-primary w-full max-w-xs mx-auto"
           >
-            Connect Wallet
+            {t('header.connect')}
           </button>
         </div>
       </div>
@@ -75,24 +50,28 @@ const AccountPage: React.FC = () => {
   return (
     <div className="pt-24 pb-16">
       <div className="container">
-        <h1 className="text-3xl font-bold text-white mb-8">My Account</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('account.title')}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-gray-800 rounded-xl p-6">
               <div className="text-center mb-6">
-                <div className="bg-blue-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <User size={40} className="text-blue-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white">{userData.name}</h3>
-                <p className="text-gray-400 text-sm">{userData.email}</p>
+                {account && (
+                  <img
+                    src={blockies(account)}
+                    alt="avatar"
+                    className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-blue-900/30 bg-white"
+                  />
+                )}
+                <h3 className="text-lg font-semibold text-white">{formatAccount(account || '')}</h3>
+                <p className="text-gray-400 text-sm">{t('account.wallet.connected')}</p>
               </div>
               
               <div className="bg-blue-900/20 rounded-lg p-4 mb-6 border border-blue-800/30">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Connected Wallet</p>
+                    <p className="text-sm text-gray-400">{t('account.wallet.connected')}</p>
                     <p className="text-blue-400 font-medium">{formatAccount(account || '')}</p>
                   </div>
                   <a 
@@ -104,7 +83,7 @@ const AccountPage: React.FC = () => {
                     <ExternalLink size={16} />
                   </a>
                 </div>
-                <p className="text-xs text-gray-400 mt-2">Network: {networkName}</p>
+                <p className="text-xs text-gray-400 mt-2">{t('account.wallet.network')}: {networkName}</p>
               </div>
               
               <nav className="space-y-1">
@@ -117,7 +96,7 @@ const AccountPage: React.FC = () => {
                   }`}
                 >
                   <Package size={18} />
-                  <span>Order History</span>
+                  <span>{t('account.orders.title')}</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('profile')}
@@ -128,7 +107,7 @@ const AccountPage: React.FC = () => {
                   }`}
                 >
                   <User size={18} />
-                  <span>Profile</span>
+                  <span>{t('account.profile.title')}</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('purchases')}
@@ -139,14 +118,14 @@ const AccountPage: React.FC = () => {
                   }`}
                 >
                   <ShoppingBag size={18} />
-                  <span>My Purchases</span>
+                  <span>{t('account.purchases.title')}</span>
                 </button>
                 <button 
                   onClick={disconnect}
                   className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:bg-gray-700 transition-colors"
                 >
                   <LogOut size={18} />
-                  <span>Disconnect</span>
+                  <span>{t('account.wallet.disconnect')}</span>
                 </button>
               </nav>
             </div>
@@ -158,102 +137,19 @@ const AccountPage: React.FC = () => {
               {/* Order History Tab */}
               {activeTab === 'orders' && (
                 <div>
-                  <h2 className="text-xl font-semibold text-white mb-6">Order History</h2>
-                  
-                  {mockOrders.length > 0 ? (
-                    <div className="space-y-4">
-                      {mockOrders.map(order => (
-                        <div key={order.id} className="bg-gray-700 rounded-lg p-4">
-                          <div className="flex flex-wrap justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-white font-medium">{order.id}</h3>
-                              <p className="text-sm text-gray-400">Placed on {order.date}</p>
-                            </div>
-                            <div className="text-right">
-                              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                order.status === 'Delivered' ? 'bg-green-900/30 text-green-400' : 'bg-blue-900/30 text-blue-400'
-                              }`}>
-                                {order.status}
-                              </span>
-                              <p className="text-white font-medium mt-1">{order.total}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="border-t border-gray-600 pt-3">
-                            <h4 className="text-sm font-medium text-gray-300 mb-2">Items</h4>
-                            <ul className="space-y-1">
-                              {order.items.map((item, index) => (
-                                <li key={index} className="text-sm text-gray-400">
-                                  {item.quantity}x {item.name}
-                                </li>
-                              ))}
-                            </ul>
-                            <button className="mt-3 text-sm text-blue-400 hover:text-blue-300">
-                              View Order Details
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Package size={48} className="mx-auto text-gray-600 mb-4" />
-                      <h3 className="text-lg font-medium text-white mb-2">No Orders Yet</h3>
-                      <p className="text-gray-400 mb-6">
-                        You haven't placed any orders yet.
-                      </p>
-                      <button 
-                        onClick={() => navigate('/products')} 
-                        className="btn btn-primary"
-                      >
-                        Browse Products
-                      </button>
-                    </div>
-                  )}
+                  <h2 className="text-xl font-semibold text-white mb-6">{t('account.orders.title')}</h2>
+                  <MyOrdersOnChain account={account} isConnected={isConnected} />
                 </div>
               )}
               
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <div>
-                  <h2 className="text-xl font-semibold text-white mb-6">Profile Information</h2>
-                  
+                  <h2 className="text-xl font-semibold text-white mb-6">{t('account.profile.title')}</h2>
                   <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium text-white mb-4">Personal Information</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-gray-700 p-4 rounded-lg">
-                          <p className="text-sm text-gray-400">Full Name</p>
-                          <p className="text-white">{userData.name}</p>
-                        </div>
-                        <div className="bg-gray-700 p-4 rounded-lg">
-                          <p className="text-sm text-gray-400">Email Address</p>
-                          <p className="text-white">{userData.email}</p>
-                        </div>
-                        <div className="bg-gray-700 p-4 rounded-lg">
-                          <p className="text-sm text-gray-400">Member Since</p>
-                          <p className="text-white">{userData.joined}</p>
-                        </div>
-                        <div className="bg-gray-700 p-4 rounded-lg">
-                          <p className="text-sm text-gray-400">Wallet Address</p>
-                          <p className="text-white">{formatAccount(account || '')}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-lg font-medium text-white mb-4">Shipping Address</h3>
-                      <div className="bg-gray-700 p-4 rounded-lg">
-                        <p className="text-white">
-                          {userData.address.street}<br />
-                          {userData.address.city}, {userData.address.state} {userData.address.zip}<br />
-                          {userData.address.country}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4">
-                      <button className="btn btn-primary">Edit Profile</button>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">{t('account.profile.walletAddress')}</span>
+                      <span className="text-white">{formatAccount(account || '')}</span>
                     </div>
                   </div>
                 </div>
@@ -262,63 +158,8 @@ const AccountPage: React.FC = () => {
               {/* Purchases Tab */}
               {activeTab === 'purchases' && (
                 <div>
-                  <h2 className="text-xl font-semibold text-white mb-6">My Purchases</h2>
-                  
-                  <div className="bg-blue-900/20 border border-blue-800/30 rounded-lg p-4 mb-6">
-                    <p className="text-white">
-                      View all your blockchain-verified purchases. Each transaction is securely recorded on the Ethereum blockchain.
-                    </p>
-                  </div>
-                  
-                  {mockOrders.length > 0 ? (
-                    <div className="space-y-4">
-                      {mockOrders.map(order => (
-                        <div key={order.id} className="bg-gray-700 rounded-lg p-4">
-                          <div className="flex flex-wrap justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-white font-medium">Transaction #{order.id.split('-')[2]}</h3>
-                              <p className="text-sm text-gray-400">Completed on {order.date}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-white font-medium">{order.total}</p>
-                              <a 
-                                href="#" 
-                                className="text-xs text-blue-400 hover:text-blue-300 flex items-center justify-end mt-1"
-                              >
-                                View on Etherscan
-                                <ExternalLink size={12} className="ml-1" />
-                              </a>
-                            </div>
-                          </div>
-                          
-                          <div className="border-t border-gray-600 pt-3">
-                            <h4 className="text-sm font-medium text-gray-300 mb-2">Purchased Items</h4>
-                            <ul className="space-y-1">
-                              {order.items.map((item, index) => (
-                                <li key={index} className="text-sm text-gray-400">
-                                  {item.quantity}x {item.name}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <ShoppingBag size={48} className="mx-auto text-gray-600 mb-4" />
-                      <h3 className="text-lg font-medium text-white mb-2">No Purchases Yet</h3>
-                      <p className="text-gray-400 mb-6">
-                        You haven't made any purchases yet.
-                      </p>
-                      <button 
-                        onClick={() => navigate('/products')} 
-                        className="btn btn-primary"
-                      >
-                        Shop Now
-                      </button>
-                    </div>
-                  )}
+                  <h2 className="text-xl font-semibold text-white mb-6">{t('account.purchases.title')}</h2>
+                  <MyOrdersOnChain account={account} isConnected={isConnected} />
                 </div>
               )}
             </div>
@@ -328,5 +169,82 @@ const AccountPage: React.FC = () => {
     </div>
   );
 };
+
+function MyOrdersOnChain({ account, isConnected }: { account: string | null, isConnected: boolean }) {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(0);
+  useEffect(() => {
+    if (!isConnected) return;
+    async function fetchOrders() {
+      setLoading(true);
+      try {
+        const contract = getCrabContract();
+        const result = await contract.getMyOrders();
+        setOrders(result);
+      } catch (e) {
+        setOrders([]);
+      }
+      setLoading(false);
+    }
+    fetchOrders();
+  }, [account, isConnected, refreshFlag]);
+
+  // 申请退款
+  const handleRequestRefund = async (orderId: any) => {
+    try {
+      const contract = getCrabContract();
+      const tx = await contract.requestRefund(orderId);
+      await tx.wait();
+      setRefreshFlag(f => f + 1);
+    } catch (e) {
+      alert('申请退款失败: ' + (e && e.message ? e.message : e));
+    }
+  };
+
+  if (!isConnected) return <div>请先连接钱包</div>;
+  if (loading) return <div>加载中...</div>;
+  if (!orders || orders.length === 0) return <div>暂无链上订单</div>;
+  return (
+    <div className="space-y-4">
+      {orders.map(order => (
+        <div key={order.orderId.toString()} className="bg-gray-700 rounded-lg p-4">
+          <div className="flex flex-wrap justify-between items-start mb-4">
+            <div>
+              <h3 className="text-white font-medium">订单ID: {order.orderId.toString()}</h3>
+              <p className="text-sm text-gray-400">商品ID: {order.giftBoxId.toString()}</p>
+              <p className="text-sm text-gray-400">数量: {order.quantity.toString()}</p>
+              <p className="text-sm text-gray-400">金额: {Number(order.totalAmount) / 1e18} ETH</p>
+              <p className="text-sm text-gray-400">收货信息: {order.shippingInfo}</p>
+              <p className="text-sm text-gray-400">下单时间: {new Date(Number(order.timestamp) * 1000).toLocaleString()}</p>
+              {order.fulfilled && order.trackingNumber && (
+                <p className="text-sm text-blue-400 mt-1">快递单号: {order.trackingNumber}</p>
+              )}
+              <p className="text-sm text-gray-400">状态: {statusMap[order.status]}</p>
+              {/* 仅待发货可申请退款 */}
+              {order.status === 0 && (
+                <button
+                  className="ml-2 px-3 py-1 bg-red-500 text-white rounded"
+                  onClick={() => handleRequestRefund(order.orderId)}
+                >
+                  申请退款
+                </button>
+              )}
+              {order.status === 3 && order.refundAmount && (
+                <p className="text-sm text-yellow-400 mt-1">退款金额: {ethers.utils.formatEther(order.refundAmount)} ETH</p>
+              )}
+            </div>
+            <div className="text-right">
+              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${order.fulfilled ? 'bg-green-900/30 text-green-400' : 'bg-blue-900/30 text-blue-400'}`}>
+                {order.fulfilled ? '已发货' : '未发货'}
+              </span>
+              <p className="text-xs text-gray-400 mt-2">{order.fulfilled ? '订单已发货，等待收货' : '订单待发货'}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default AccountPage;

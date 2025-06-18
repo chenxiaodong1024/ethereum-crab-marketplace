@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </h3>
         </div>
         <div className="flex items-baseline mt-1 space-x-2">
-          <p className="text-xl font-bold text-white">{product.ethPrice} ETH</p>
+          <p className="text-xl font-bold text-white">{product.price} USDC</p>
           <p className="text-sm text-gray-400">(${product.price.toFixed(2)})</p>
         </div>
         <p className="text-sm text-gray-400 mt-2 line-clamp-2">{product.description}</p>

@@ -6,11 +6,14 @@
     "cart": "Cart",
     "connect": "Connect Wallet",
     "connecting": "Connecting...",
-    "brand": "Crab Emporium"
+    "brand": "Fresh Crab Home",
+    "seller": "Seller Center",
+    "disconnect": "Disconnect",
+    "network": "Network"
   },
   "footer": {
     "brand": {
-      "title": "Crab Emporium",
+      "title": "Fresh Crab Home",
       "desc": "The premier marketplace for premium crab products, powered by blockchain technology."
     },
     "quickLinks": {
@@ -31,7 +34,7 @@
       "title": "Contact Us",
       "address": "1234 Crab Avenue",
       "city": "Ocean City, OC 98765",
-      "email": "support@crabemporium.com",
+      "email": "chenxiaodong1024@gmail.com",
       "phone": "+1 (123) 456-7890"
     },
     "rights": "All rights reserved.",
@@ -50,7 +53,7 @@
       "title": "Filters",
       "clear": "Clear All",
       "categories": "Categories",
-      "priceRange": "Price Range (ETH)",
+      "priceRange": "Price Range (USDC)",
       "minPrice": "Min Price",
       "maxPrice": "Max Price",
       "activeFilters": "Active Filters",
@@ -120,10 +123,19 @@
       },
       "id": "Order ID",
       "date": "Placed on",
-      "status": "Status",
+      "status": {
+        "delivered": "Delivered",
+        "shipped": "Shipped"
+      },
       "total": "Total",
-      "items": "Items",
-      "details": "View Order Details"
+      "items": "Purchased Items",
+      "details": "View Order Details",
+      "placedOn": "Placed on {{date}}",
+      "quantity": "Quantity",
+      "giftBoxName": "Gift Box Spec",
+      "shippingInfo": "Shipping Info",
+      "trackingNumber": "Tracking Number",
+      "actions": "Actions"
     },
     "profile": {
       "title": "Profile Information",
@@ -134,6 +146,145 @@
       "walletAddress": "Wallet Address",
       "shipping": "Shipping Address",
       "edit": "Edit Profile"
+    },
+    "purchases": {
+      "title": "My Purchases",
+      "blockchainDesc": "View all your blockchain-verified purchases. Each transaction is securely recorded on the Ethereum blockchain.",
+      "transaction": "Transaction #{{id}}",
+      "completedOn": "Completed on {{date}}",
+      "viewOnEtherscan": "View on Etherscan"
     }
+  },
+  "home": {
+    "hero": {
+      "title": "Hongze Lake Crab",
+      "subtitle": "Blockchain Direct Supply!",
+      "description": "🦀 Premium crabs from Hongze Lake, now on the blockchain! 🌊",
+      "shopNow": "Shop Now"
+    },
+    "features": {
+      "quality": {
+        "title": "Premium Quality",
+        "desc": "Carefully selected premium crabs"
+      },
+      "fresh": {
+        "title": "Direct from Source",
+        "desc": "Shipped directly from origin"
+      },
+      "delivery": {
+        "title": "Fast Delivery",
+        "desc": "Delivered within 24 hours"
+      },
+      "certification": {
+        "title": "Quality Certification",
+        "desc": "Blockchain traceability"
+      }
+    },
+    "featured": {
+      "title": "Today's Featured 🦀",
+      "description": "Each crab comes with blockchain certification, ensuring authenticity!",
+      "viewAll": "View All Products"
+    },
+    "benefits": {
+      "title": "Why Choose Us?",
+      "description": "Blockchain technology ensures the quality of every crab! 🌊",
+      "traceability": {
+        "title": "Traceability Guarantee",
+        "description": "Each crab has a unique blockchain ID, ensuring authenticity!"
+      },
+      "security": {
+        "title": "Secure Transactions",
+        "description": "Blockchain payments, safe and reliable!"
+      },
+      "delivery": {
+        "title": "Express Delivery",
+        "description": "Delivered within 24 hours, ensuring freshness!"
+      }
+    },
+    "cta": {
+      "title": "Ready to Enjoy Delicious Crabs? 🦀",
+      "description": "Connect your wallet and buy authentic Hongze Lake crabs now!",
+      "shopNow": "Shop Now"
+    }
+  },
+  "productDetail": {
+    "fastShipping": {
+      "title": "Fast Shipping",
+      "desc": "Premium overnight delivery ensures your crabs arrive fresh."
+    },
+    "qualityGuarantee": {
+      "title": "Quality Guarantee",
+      "desc": "We stand behind the quality of our products with a 100% satisfaction guarantee."
+    },
+    "securePackaging": {
+      "title": "Secure Packaging",
+      "desc": "Special temperature-controlled packaging ensures optimal freshness."
+    }
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingInfo": "Shipping Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "street": "Street Address",
+    "city": "City",
+    "state": "State",
+    "zip": "ZIP Code",
+    "country": "Country",
+    "countryUS": "United States",
+    "countryCA": "Canada",
+    "countryUK": "United Kingdom",
+    "countryAU": "Australia",
+    "countryJP": "Japan",
+    "countryCN": "Mainland China",
+    "countryMX": "Mexico",
+    "countryHK": "Hong Kong",
+    "countryTW": "Taiwan",
+    "paymentInfo": "Payment Information",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total",
+    "qty": "Qty",
+    "charged": "You will be charged ${{amount}} from your connected wallet.",
+    "agree": "By placing your order, you agree to our Terms of Service and Privacy Policy.",
+    "completePurchase": "Complete Purchase",
+    "paymentInfoTitle": "Payment Information",
+    "connected": "Connected"
+  },
+  "seller": {
+    "title": "Seller Center",
+    "info": "Seller Information",
+    "wallet": "Wallet Address",
+    "balance": "Contract Balance",
+    "withdraw": "Withdraw",
+    "orders": "Order Management",
+    "noOrders": "No Orders",
+    "orderId": "Order ID",
+    "buyer": "Buyer Address",
+    "giftBoxId": "Gift Box ID",
+    "quantity": "Quantity",
+    "amount": "Amount",
+    "shippingInfo": "Shipping Info",
+    "status": "Status",
+    "actions": "Actions",
+    "fulfilled": "Fulfilled",
+    "pending": "Pending",
+    "fulfill": "Fulfill",
+    "loading": "Loading...",
+    "connectWallet": "Connect Wallet",
+    "connectWalletDesc": "Please connect your wallet to access the seller center",
+    "notOwner": "Access Denied",
+    "notOwnerDesc": "Only the contract owner can access this page. Please make sure you are using the correct wallet address.",
+    "giftBoxName": "Gift Box Spec",
+    "trackingNumber": "Tracking Number"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "notApplicable": "N/A"
   }
 }

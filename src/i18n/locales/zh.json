@@ -1,16 +1,71 @@
 {
   "header": {
     "home": "首页",
-    "products": "产品",
+    "products": "商品",
     "account": "账户",
     "cart": "购物车",
     "connect": "连接钱包",
     "connecting": "连接中...",
-    "brand": "蟹品商城"
+    "brand": "鲜蟹到家",
+    "seller": "商家中心",
+    "disconnect": "断开连接",
+    "network": "网络"
+  },
+  "home": {
+    "hero": {
+      "title": "洪泽湖大闸蟹",
+      "subtitle": "区块链直供！",
+      "description": "🦀 来自洪泽湖的鲜美大闸蟹，现在在区块链上！ 🌊",
+      "shopNow": "立即选购"
+    },
+    "features": {
+      "quality": {
+        "title": "优质品质",
+        "desc": "精选上等大闸蟹"
+      },
+      "fresh": {
+        "title": "新鲜直达",
+        "desc": "产地直接发货"
+      },
+      "delivery": {
+        "title": "快速配送",
+        "desc": "24小时内送达"
+      },
+      "certification": {
+        "title": "品质认证",
+        "desc": "区块链溯源"
+      }
+    },
+    "featured": {
+      "title": "今日精选 🦀",
+      "description": "每只大闸蟹都配备区块链认证，保证正品溯源！",
+      "viewAll": "查看全部商品"
+    },
+    "benefits": {
+      "title": "为什么选择我们？",
+      "description": "区块链技术保证每一只大闸蟹的品质！ 🌊",
+      "traceability": {
+        "title": "溯源保证",
+        "description": "每只大闸蟹都有独特的区块链ID，保证正品！"
+      },
+      "security": {
+        "title": "安全交易",
+        "description": "区块链支付，安全可靠！"
+      },
+      "delivery": {
+        "title": "极速配送",
+        "description": "下单后24小时内送达，保证新鲜！"
+      }
+    },
+    "cta": {
+      "title": "准备好享受美味了吗？ 🦀",
+      "description": "连接钱包，立即购买正宗洪泽湖大闸蟹！",
+      "shopNow": "立即购买"
+    }
   },
   "footer": {
     "brand": {
-      "title": "蟹品商城",
+      "title": "鲜蟹到家",
       "desc": "区块链驱动的优质大闸蟹交易平台"
     },
     "quickLinks": {
@@ -29,10 +84,10 @@
     },
     "contact": {
       "title": "联系我们",
-      "address": "洪泽湖大道1234号",
-      "city": "淮安市 洪泽区",
-      "email": "support@crabemporium.com",
-      "phone": "+86 123 4567 8900"
+      "address": "宿迁市泗洪县",
+      "city": "江苏省",
+      "email": "chenxiaodong1024@gmail.com",
+      "phone": "86 17766094698"
     },
     "rights": "版权所有",
     "policies": {
@@ -50,7 +105,7 @@
       "title": "筛选",
       "clear": "清除全部",
       "categories": "分类",
-      "priceRange": "价格区间 (ETH)",
+      "priceRange": "价格区间 (USDC)",
       "minPrice": "最低价",
       "maxPrice": "最高价",
       "activeFilters": "已选筛选",
@@ -84,7 +139,7 @@
     "empty": {
       "title": "购物车是空的",
       "desc": "看起来您还没有添加任何大闸蟹到购物车",
-      "action": "浏览产品"
+      "action": "浏览商品"
     },
     "title": "您的购物车",
     "items": "购物车商品",
@@ -100,7 +155,22 @@
     "connect": "连接钱包以结算",
     "continue": "继续购物",
     "quantity": "数量",
-    "remove": "删除商品"
+    "remove": "删除商品",
+    "price": "价格",
+    "weight": "重量",
+    "totalItems": "商品总数",
+    "unitPrice": "单价",
+    "subtotal": "小计",
+    "shippingFee": "运费",
+    "taxFee": "税费",
+    "totalAmount": "总金额",
+    "checkoutButton": "去结算",
+    "continueShopping": "继续购物",
+    "emptyCart": "清空购物车",
+    "removeItem": "删除商品",
+    "updateQuantity": "更新数量",
+    "cartItems": "购物车商品",
+    "orderSummary": "订单摘要"
   },
   "account": {
     "title": "我的账户",
@@ -123,7 +193,17 @@
       "status": "状态",
       "total": "总计",
       "items": "商品",
-      "details": "查看订单详情"
+      "details": "查看订单详情",
+      "placedOn": "下单时间：{{date}}",
+      "status": {
+        "delivered": "已送达",
+        "shipped": "已发货"
+      },
+      "quantity": "数量",
+      "giftBoxName": "礼盒规格",
+      "shippingInfo": "收货信息",
+      "trackingNumber": "快递单号",
+      "actions": "操作"
     },
     "profile": {
       "title": "个人信息",
@@ -134,6 +214,130 @@
       "walletAddress": "钱包地址",
       "shipping": "收货地址",
       "edit": "编辑资料"
+    },
+    "purchases": {
+      "title": "我的购买",
+      "blockchainDesc": "查看您所有区块链认证的购买记录。每一笔交易都安全记录在以太坊区块链上。",
+      "transaction": "交易 #{{id}}",
+      "completedOn": "完成时间：{{date}}",
+      "viewOnEtherscan": "在Etherscan上查看"
     }
+  },
+  "productDetail": {
+    "notFound": {
+      "title": "产品未找到",
+      "description": "您查找的产品不存在或已被移除。",
+      "backButton": "返回商品列表"
+    },
+    "backButton": "返回商品列表",
+    "featured": "特色商品",
+    "lowStock": "库存不足",
+    "origin": "产地",
+    "weight": "重量",
+    "category": "分类",
+    "crab": "蟹",
+    "stock": "库存",
+    "available": "有货",
+    "quantity": "数量",
+    "connectWallet": "连接钱包购买",
+    "shippingInfo": "收货信息",
+    "shippingInfoPlaceholder": "请输入您的收货地址、联系方式等。",
+    "buyOnChain": "链上购买",
+    "paying": "支付中...",
+    "outOfStock": "已售罄",
+    "fastShipping": {
+      "title": "极速配送",
+      "desc": "顺丰特快"
+    },
+    "securePayment": {
+      "title": "安全支付",
+      "description": "所有交易均由区块链技术保障安全。"
+    },
+    "qualityGuarantee": {
+      "title": "品质保障",
+      "description": "我们保证提供新鲜优质的大闸蟹。"
+    },
+    "securePackaging": {
+      "title": "安全包装",
+      "desc": "特殊控温包装，确保最佳新鲜度。"
+    }
+  },
+  "checkout": {
+    "title": "结算",
+    "shippingInfo": "收货信息",
+    "firstName": "名",
+    "lastName": "姓",
+    "email": "电子邮箱",
+    "street": "详细地址",
+    "city": "城市",
+    "state": "省/州",
+    "zip": "邮编",
+    "country": "国家/地区",
+    "countryUS": "美国",
+    "countryCA": "加拿大",
+    "countryUK": "英国",
+    "countryAU": "澳大利亚",
+    "countryJP": "日本",
+    "countryCN": "中国大陆",
+    "countryHK": "中国香港",
+    "countryTW": "中国台湾",
+    "paymentInfo": "支付信息",
+    "orderSummary": "订单摘要",
+    "subtotal": "小计",
+    "shipping": "运费",
+    "tax": "税费",
+    "total": "总计",
+    "qty": "数量",
+    "confirmedTitle": "订单已确认！",
+    "confirmedDesc": "感谢您的购买，您的订单已确认并即将发货。",
+    "transactionHash": "交易哈希：{{hash}}",
+    "continue": "继续购物",
+    "charged": "您将从钱包支付 ${{amount}}。",
+    "agree": "下单即表示您同意我们的服务条款和隐私政策。",
+    "completePurchase": "完成支付",
+    "paymentInfoTitle": "支付信息",
+    "connected": "已连接钱包",
+    "summary": {
+      "subtotal": "小计",
+      "shipping": "运费",
+      "tax": "税费",
+      "total": "总计"
+    }
+  },
+  "seller": {
+    "title": "卖家中心",
+    "info": "卖家信息",
+    "wallet": "钱包地址",
+    "balance": "合约余额",
+    "withdraw": "提现",
+    "orders": "订单管理",
+    "noOrders": "暂无订单",
+    "orderId": "订单ID",
+    "buyer": "买家地址",
+    "giftBoxId": "礼盒ID",
+    "quantity": "数量",
+    "amount": "金额",
+    "shippingInfo": "收货信息",
+    "status": "状态",
+    "actions": "操作",
+    "fulfilled": "已发货",
+    "pending": "待发货",
+    "fulfill": "发货",
+    "refundPending": "退款申请中",
+    "refunded": "已退款",
+    "refundRejected": "退款被拒绝",
+    "loading": "加载中...",
+    "connectWallet": "请连接钱包",
+    "connectWalletDesc": "请连接钱包以访问卖家中心",
+    "notOwner": "访问受限",
+    "notOwnerDesc": "只有合约所有者才能访问此页面。请确保您使用的是正确的钱包地址。",
+    "giftBoxName": "礼盒规格",
+    "trackingNumber": "快递单号"
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "loading": "加载中...",
+    "notApplicable": "不适用"
   }
 }

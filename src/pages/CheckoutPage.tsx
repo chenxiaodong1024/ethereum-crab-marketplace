@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Check, CreditCard, Loader } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWeb3 } from '../contexts/Web3Context';
+import { useTranslation } from 'react-i18next';
+import { getCrabContract, getUSDCContract } from '../utils/contract';
+import { ethers } from 'ethers';
 
 interface CheckoutForm {
   firstName: string;
@@ -19,6 +22,7 @@ const CheckoutPage: React.FC = () => {
   const { items, totalPrice, clearCart } = useCart();
   const { account, isConnected, connect } = useWeb3();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const [form, setForm] = useState<CheckoutForm>({
     firstName: '',
@@ -103,6 +107,12 @@ const CheckoutPage: React.FC = () => {
     // Validate form
     if (!validateForm()) return;
     
+    // 只支持单商品结算
+    if (items.length !== 1) {
+      alert(t('checkout.onlyOneItem'));
+      return;
+    }
+    
     // Check wallet connection
     if (!isConnected) {
       await connect();
@@ -111,12 +121,40 @@ const CheckoutPage: React.FC = () => {
     
     setIsSubmitting(true);
     
-    // Simulate payment processing
-    setTimeout(() => {
+    try {
+      // 合并收货信息
+      const shippingInfo = `${form.firstName} ${form.lastName}, ${form.email}, ${form.address}, ${form.city}, ${form.state}, ${form.zipCode}, ${form.country}`;
+      const contract = getCrabContract();
+      const usdcContract = getUSDCContract();
+      console.log('Contract Instance:', contract);
+      console.log('Contract buyGiftBox Method:', contract.buyGiftBox);
+      const item = items[0];
+      const usdcTotal = items.reduce((sum, item) => sum + (item?.price ?? 0) * item.quantity, 0);
+      const totalPrice = ethers.utils.parseUnits(usdcTotal.toString(), 6); // 将USDC金额转换为最小单位 (6位小数)
+      
+      // 先授权USDC
+      console.log('Approving USDC...');
+      const approveTx = await usdcContract.approve(contract.address, totalPrice);
+      await approveTx.wait();
+      
+      // 调用buyGiftBox方法
+      console.log('Buying gift box...');
+      const tx = await contract.buyGiftBox(
+        item.id, // 礼盒ID
+        item.quantity, // 数量
+        shippingInfo
+      );
+      await tx.wait();
       setIsSubmitting(false);
       setPaymentSuccess(true);
       clearCart();
-    }, 2000);
+      alert(t('checkout.success'));
+    } catch (err) {
+      const e = err as any;
+      console.error('Contract Call Error:', e);
+      setIsSubmitting(false);
+      alert(t('checkout.failed') + (e && e.message ? e.message : e));
+    }
   };
   
   if (paymentSuccess) {
@@ -126,39 +164,45 @@ const CheckoutPage: React.FC = () => {
           <div className="bg-green-900/30 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
             <Check size={40} className="text-green-400" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-4">Order Confirmed!</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('checkout.confirmedTitle')}</h2>
           <p className="text-gray-300 mb-6">
-            Thank you for your purchase. Your order has been confirmed and will be shipped soon.
+            {t('checkout.confirmedDesc')}
           </p>
           <p className="text-green-400 mb-6 font-medium">
-            Transaction hash: {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
+            {t('checkout.transactionHash', {hash: account ? account.substring(0, 6) + '...' + account.substring(account.length - 4) : ''})}
           </p>
           <button 
             onClick={() => navigate('/products')} 
-            className="btn btn-primary"
+            className="btn btn-primary mx-auto block"
           >
-            Continue Shopping
+            {t('checkout.continue')}
           </button>
         </div>
       </div>
     );
   }
 
+  // 将商品单价显示从ETH改为USDC
+  const subtotalUSDC = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shippingUSDC = 0;
+  const taxUSDC = 0;
+  const totalUSDC = subtotalUSDC;
+
   return (
     <div className="pt-24 pb-16">
       <div className="container">
-        <h1 className="text-3xl font-bold text-white mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('checkout.title')}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <div className="bg-gray-800 rounded-xl p-6">
-              <h2 className="text-xl font-semibold text-white mb-6">Shipping Information</h2>
+              <h2 className="text-xl font-semibold text-white mb-6">{t('checkout.shippingInfo')}</h2>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-gray-300 mb-1">First Name</label>
+                    <label htmlFor="firstName" className="block text-gray-300 mb-1">{t('checkout.firstName')}</label>
                     <input
                       type="text"
                       id="firstName"
@@ -170,7 +214,7 @@ const CheckoutPage: React.FC = () => {
                     {errors.firstName && <p className="text-red-400 text-sm mt-1">{errors.firstName}</p>}
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-gray-300 mb-1">Last Name</label>
+                    <label htmlFor="lastName" className="block text-gray-300 mb-1">{t('checkout.lastName')}</label>
                     <input
                       type="text"
                       id="lastName"
@@ -184,7 +228,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-gray-300 mb-1">Email Address</label>
+                  <label htmlFor="email" className="block text-gray-300 mb-1">{t('checkout.email')}</label>
                   <input
                     type="email"
                     id="email"
@@ -197,7 +241,7 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="address" className="block text-gray-300 mb-1">Street Address</label>
+                  <label htmlFor="address" className="block text-gray-300 mb-1">{t('checkout.street')}</label>
                   <input
                     type="text"
                     id="address"
@@ -211,7 +255,7 @@ const CheckoutPage: React.FC = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label htmlFor="city" className="block text-gray-300 mb-1">City</label>
+                    <label htmlFor="city" className="block text-gray-300 mb-1">{t('checkout.city')}</label>
                     <input
                       type="text"
                       id="city"
@@ -223,7 +267,7 @@ const CheckoutPage: React.FC = () => {
                     {errors.city && <p className="text-red-400 text-sm mt-1">{errors.city}</p>}
                   </div>
                   <div>
-                    <label htmlFor="state" className="block text-gray-300 mb-1">State</label>
+                    <label htmlFor="state" className="block text-gray-300 mb-1">{t('checkout.state')}</label>
                     <input
                       type="text"
                       id="state"
@@ -235,7 +279,7 @@ const CheckoutPage: React.FC = () => {
                     {errors.state && <p className="text-red-400 text-sm mt-1">{errors.state}</p>}
                   </div>
                   <div>
-                    <label htmlFor="zipCode" className="block text-gray-300 mb-1">ZIP Code</label>
+                    <label htmlFor="zipCode" className="block text-gray-300 mb-1">{t('checkout.zip')}</label>
                     <input
                       type="text"
                       id="zipCode"
@@ -249,39 +293,41 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="country" className="block text-gray-300 mb-1">Country</label>
+                  <label htmlFor="country" className="block text-gray-300 mb-1">{t('checkout.country')}</label>
                   <select
                     id="country"
                     name="country"
                     value={form.country}
                     onChange={handleInputChange}
-                    className="input"
+                    className={`input ${errors.country ? 'border-red-500' : ''}`}
                   >
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="AU">Australia</option>
-                    <option value="JP">Japan</option>
+                    <option value="US">{t('checkout.countryUS')}</option>
+                    <option value="CA">{t('checkout.countryCA')}</option>
+                    <option value="MX">{t('checkout.countryMX')}</option>
+                    <option value="CN">{t('checkout.countryCN')}</option>
+                    <option value="HK">{t('checkout.countryHK')}</option>
+                    <option value="TW">{t('checkout.countryTW')}</option>
                   </select>
+                  {errors.country && <p className="text-red-400 text-sm mt-1">{errors.country}</p>}
                 </div>
                 
-                <h2 className="text-xl font-semibold text-white mt-8 mb-6">Payment Information</h2>
+                <h2 className="text-xl font-semibold text-white mt-8 mb-6">{t('checkout.paymentInfo')}</h2>
                 
                 <div className="bg-blue-900/20 border border-blue-800/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start">
                     <CreditCard className="text-blue-400 mr-3 mt-1 flex-shrink-0" size={20} />
                     <div>
-                      <h4 className="text-white font-medium">Ethereum Payment</h4>
+                      <h4 className="text-white font-medium">{t('checkout.paymentInfoTitle')}</h4>
                       <p className="text-sm text-gray-400">
-                        You will be charged {totalPrice.toFixed(4)} ETH from your connected wallet.
+                        {t('checkout.charged', { amount: totalUSDC.toFixed(2) })}
                       </p>
                       {isConnected ? (
                         <p className="text-blue-400 text-sm mt-2">
-                          Connected: {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
+                          {t('checkout.connected')}: {account?.substring(0, 6)}...{account?.substring(account.length - 4)}
                         </p>
                       ) : (
                         <p className="text-yellow-400 text-sm mt-2">
-                          Please connect your wallet to continue.
+                          {t('checkout.connectToContinue')}
                         </p>
                       )}
                     </div>
@@ -303,17 +349,17 @@ const CheckoutPage: React.FC = () => {
                     {isSubmitting ? (
                       <>
                         <Loader size={18} className="animate-spin mr-2" />
-                        Processing...
+                        {t('checkout.processing')}
                       </>
                     ) : isConnected ? (
-                      'Complete Purchase'
+                      t('checkout.completePurchase')
                     ) : (
-                      'Connect Wallet to Continue'
+                      t('checkout.connectToContinue')
                     )}
                   </button>
                   
                   <p className="text-sm text-gray-400 mt-4 text-center">
-                    By placing your order, you agree to our Terms of Service and Privacy Policy.
+                    {t('checkout.agree')}
                   </p>
                 </div>
               </form>
@@ -323,7 +369,7 @@ const CheckoutPage: React.FC = () => {
           {/* Order Summary */}
           <div>
             <div className="bg-gray-800 rounded-xl p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-white mb-6">Order Summary</h2>
+              <h2 className="text-xl font-semibold text-white mb-6">{t('checkout.orderSummary')}</h2>
               
               <div className="max-h-64 overflow-y-auto mb-4">
                 {items.map(item => (
@@ -339,7 +385,7 @@ const CheckoutPage: React.FC = () => {
                       <h3 className="text-white font-medium">{item.name}</h3>
                       <div className="flex justify-between items-baseline mt-1">
                         <span className="text-gray-400 text-sm">Qty: {item.quantity}</span>
-                        <span className="text-white">{item.ethPrice} ETH</span>
+                        <span className="text-white">{item.price} USDC</span>
                       </div>
                     </div>
                   </div>
@@ -348,20 +394,20 @@ const CheckoutPage: React.FC = () => {
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-300">
-                  <span>Subtotal</span>
-                  <span>{(totalPrice * 0.9).toFixed(4)} ETH</span>
+                  <span>{t('cart.subtotal')}</span>
+                  <span>{subtotalUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>Shipping</span>
-                  <span>{(totalPrice * 0.05).toFixed(4)} ETH</span>
+                  <span>{t('cart.shippingFee')}</span>
+                  <span>{shippingUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
-                  <span>Tax</span>
-                  <span>{(totalPrice * 0.05).toFixed(4)} ETH</span>
+                  <span>{t('cart.taxFee')}</span>
+                  <span>{taxUSDC.toFixed(2)} USDC</span>
                 </div>
                 <div className="border-t border-gray-700 pt-3 flex justify-between font-bold text-white">
-                  <span>Total</span>
-                  <span>{totalPrice.toFixed(4)} ETH</span>
+                  <span>{t('cart.totalAmount')}</span>
+                  <span>{totalUSDC.toFixed(2)} USDC</span>
                 </div>
               </div>
             </div>

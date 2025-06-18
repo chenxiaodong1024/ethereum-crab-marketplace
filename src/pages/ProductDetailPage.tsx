@@ -1,24 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft, Plus, Minus, Truck, Shield, Package } from 'lucide-react';
 import { getProductById } from '../data/products';
 import { useCart } from '../contexts/CartContext';
 import { useWeb3 } from '../contexts/Web3Context';
+import { useTranslation } from 'react-i18next';
+import { getCrabContract, getUSDCContract } from '../utils/contract';
+import { ethers } from 'ethers';
+import { Product } from '../types/Product';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const product = getProductById(id ? parseInt(id) : 0);
+  const [product, setProduct] = useState<Product | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const { addToCart } = useCart();
   const { isConnected, connect } = useWeb3();
   const [quantity, setQuantity] = useState(1);
+  const { t } = useTranslation();
   
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedProduct = await getProductById(id ? parseInt(id) : 0);
+        setProduct(fetchedProduct);
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+  
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center pt-32 pb-16">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="container pt-32 pb-16 text-center">
-        <h2 className="text-2xl font-bold text-white mb-4">Product Not Found</h2>
-        <p className="text-gray-400 mb-6">The product you're looking for doesn't exist or has been removed.</p>
+        <h2 className="text-2xl font-bold text-white mb-4">{t('productDetail.notFound.title')}</h2>
+        <p className="text-gray-400 mb-6">{t('productDetail.notFound.description')}</p>
         <Link to="/products" className="btn btn-primary">
-          Back to Products
+          {t('productDetail.notFound.backButton')}
         </Link>
       </div>
     );
@@ -45,7 +74,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="container">
         <Link to="/products" className="inline-flex items-center text-blue-400 hover:text-blue-300 mb-8">
           <ArrowLeft size={16} className="mr-2" />
-          Back to Products
+          {t('productDetail.backButton')}
         </Link>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -58,12 +87,12 @@ const ProductDetailPage: React.FC = () => {
             />
             {product.featured && (
               <span className="absolute top-4 left-4 bg-accent-500 text-black text-sm font-bold py-1 px-3 rounded">
-                Featured
+                {t('productDetail.featured')}
               </span>
             )}
             {product.stock <= 10 && (
               <span className="absolute top-4 right-4 bg-red-500 text-white text-sm font-bold py-1 px-3 rounded">
-                Low Stock
+                {t('productDetail.lowStock')}
               </span>
             )}
           </div>
@@ -73,7 +102,7 @@ const ProductDetailPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-white mb-2">{product.name}</h1>
             
             <div className="flex items-baseline space-x-3 mb-4">
-              <span className="text-3xl font-bold text-white">{product.ethPrice} ETH</span>
+              <span className="text-3xl font-bold text-white">{product.price.toFixed(2)} USDC</span>
               <span className="text-gray-400">(${product.price.toFixed(2)} USD)</span>
             </div>
             
@@ -83,26 +112,26 @@ const ProductDetailPage: React.FC = () => {
             
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-gray-800 p-4 rounded-lg">
-                <p className="text-sm text-gray-400">Origin</p>
+                <p className="text-sm text-gray-400">{t('productDetail.origin')}</p>
                 <p className="font-medium text-white">{product.origin}</p>
               </div>
               <div className="bg-gray-800 p-4 rounded-lg">
-                <p className="text-sm text-gray-400">Weight</p>
+                <p className="text-sm text-gray-400">{t('productDetail.weight')}</p>
                 <p className="font-medium text-white">{product.weight}</p>
               </div>
               <div className="bg-gray-800 p-4 rounded-lg">
-                <p className="text-sm text-gray-400">Category</p>
-                <p className="font-medium text-white">{product.category.charAt(0).toUpperCase() + product.category.slice(1)} Crab</p>
+                <p className="text-sm text-gray-400">{t('productDetail.category')}</p>
+                <p className="font-medium text-white">{product.category}</p>
               </div>
               <div className="bg-gray-800 p-4 rounded-lg">
-                <p className="text-sm text-gray-400">Stock</p>
-                <p className="font-medium text-white">{product.stock} available</p>
+                <p className="text-sm text-gray-400">{t('productDetail.stock')}</p>
+                <p className="font-medium text-white">{product.stock} {t('productDetail.available')}</p>
               </div>
             </div>
             
             {/* Quantity Selector */}
             <div className="mb-6">
-              <label className="block text-gray-300 mb-2">Quantity</label>
+              <label className="block text-gray-300 mb-2">{t('productDetail.quantity')}</label>
               <div className="flex items-center">
                 <button 
                   onClick={decreaseQuantity}
@@ -136,40 +165,39 @@ const ProductDetailPage: React.FC = () => {
                 className="btn btn-primary flex-grow flex items-center justify-center gap-2"
               >
                 <ShoppingCart size={18} />
-                Add to Cart
+                {t('products.addToCart')}
               </button>
-              
               {!isConnected && (
                 <button 
                   onClick={connect}
                   className="btn btn-outline flex-grow"
                 >
-                  Connect Wallet to Buy
+                  {t('productDetail.connectWallet')}
                 </button>
               )}
             </div>
-            
+
             {/* Shipping & Guarantee Info */}
             <div className="mt-8 space-y-4">
               <div className="flex items-start space-x-3">
                 <Truck className="text-blue-400 mt-1 flex-shrink-0" size={20} />
                 <div>
-                  <h4 className="text-white font-medium">Fast Shipping</h4>
-                  <p className="text-sm text-gray-400">Premium overnight delivery ensures your crabs arrive fresh.</p>
+                  <p className="font-medium text-white">{t('productDetail.fastShipping.title')}</p>
+                  <p className="text-blue-200 text-sm">{t('productDetail.fastShipping.desc')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Shield className="text-blue-400 mt-1 flex-shrink-0" size={20} />
                 <div>
-                  <h4 className="text-white font-medium">Quality Guarantee</h4>
-                  <p className="text-sm text-gray-400">We stand behind the quality of our products with a 100% satisfaction guarantee.</p>
+                  <p className="font-medium text-white">{t('productDetail.securePayment.title')}</p>
+                  <p className="text-blue-200 text-sm">{t('productDetail.securePayment.description')}</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Package className="text-blue-400 mt-1 flex-shrink-0" size={20} />
                 <div>
-                  <h4 className="text-white font-medium">Secure Packaging</h4>
-                  <p className="text-sm text-gray-400">Special temperature-controlled packaging ensures optimal freshness.</p>
+                  <p className="font-medium text-white">{t('productDetail.qualityGuarantee.title')}</p>
+                  <p className="text-blue-200 text-sm">{t('productDetail.qualityGuarantee.description')}</p>
                 </div>
               </div>
             </div>
