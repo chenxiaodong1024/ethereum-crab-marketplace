@@ -116,6 +116,10 @@ const SellerPage: React.FC = () => {
   };
 
   const handleWithdraw = async () => {
+    if (parseFloat(contractBalance) <= 0) {
+      alert(t('seller.noBalance'));
+      return;
+    }
     try {
       const contract = getCrabContract();
       const tx = await contract.withdraw();
@@ -233,12 +237,15 @@ const SellerPage: React.FC = () => {
             <p className="text-white font-mono">{contractBalance} USDC</p>
           </div>
         </div>
-        <button
-          onClick={handleWithdraw}
-          className="mt-4 bg-accent-500 hover:bg-accent-600 text-gray-900 font-bold py-2 px-4 rounded"
-        >
-          {t('seller.withdraw')}
-        </button>
+        <div className="mt-4">
+          <button
+            onClick={handleWithdraw}
+            disabled={parseFloat(contractBalance) <= 0}
+            className="mt-4 bg-accent-500 hover:bg-accent-600 text-gray-900 font-bold py-2 px-4 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
+          >
+            {t('seller.withdraw')}
+          </button>
+        </div>
       </div>
 
       {/* 订单列表 */}
