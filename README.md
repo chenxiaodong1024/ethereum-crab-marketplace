@@ -56,6 +56,17 @@ npm run dev
 2. Update the contract address in `src/utils/contract.ts`
 3. Configure USDC token address
 
+#### Current Deployment (Sepolia Testnet)
+
+- **CrabUSDC Contract**: `0x6A98050e97CE3224a8E8df91973f6Abf3C977FAb`
+- **USDC Token**: `0xA044057E59035d455B2C23B41C6B29BdadEcd967`
+- **Network**: Sepolia Testnet (Chain ID: 11155111)
+
+To connect to the testnet:
+1. Add Sepolia network to MetaMask
+2. Get test ETH from [Sepolia Faucet](https://sepoliafaucet.com/)
+3. Connect your wallet to the application
+
 ## 📋 Project Structure
 
 ```

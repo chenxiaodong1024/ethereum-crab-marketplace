@@ -60,6 +60,39 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
       const signer = provider.getSigner();
       const network = await provider.getNetwork();
       
+      // Check if connected to Sepolia testnet
+      if (network.chainId !== 11155111) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0xaa36a7' }], // Sepolia chainId in hex
+          });
+        } catch (switchError: any) {
+          // If Sepolia is not added to MetaMask, add it
+          if (switchError.code === 4902) {
+            try {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0xaa36a7',
+                  chainName: 'Sepolia Testnet',
+                  nativeCurrency: {
+                    name: 'Sepolia Ether',
+                    symbol: 'SEP',
+                    decimals: 18,
+                  },
+                  rpcUrls: ['https://sepolia.infura.io/v3/'],
+                  blockExplorerUrls: ['https://sepolia.etherscan.io/'],
+                }],
+              });
+            } catch (addError) {
+              console.error('Error adding Sepolia network', addError);
+              alert('Please add Sepolia testnet to MetaMask manually');
+            }
+          }
+        }
+      }
+      
       setProvider(provider);
       setSigner(signer);
       setAccount(accounts[0]);
@@ -75,6 +108,7 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
         42: 'Kovan Testnet',
         56: 'Binance Smart Chain',
         137: 'Polygon Mainnet',
+        11155111: 'Sepolia Testnet',
       };
       
       setNetworkName(networkMap[network.chainId] || `Chain ID: ${network.chainId}`);
@@ -159,6 +193,7 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
               42: 'Kovan Testnet',
               56: 'Binance Smart Chain',
               137: 'Polygon Mainnet',
+              11155111: 'Sepolia Testnet',
             };
             
             setNetworkName(networkMap[network.chainId] || `Chain ID: ${network.chainId}`);

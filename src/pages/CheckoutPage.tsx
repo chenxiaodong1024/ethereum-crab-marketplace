@@ -4,8 +4,9 @@ import { Check, CreditCard, Loader } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useWeb3 } from '../contexts/Web3Context';
 import { useTranslation } from 'react-i18next';
-import { getCrabContract, getUSDCContract } from '../utils/contract';
+import { getCrabContract, getUSDCContract, checkUSDCBalance } from '../utils/contract';
 import { ethers } from 'ethers';
+import USDCGuide from '../components/USDCGuide';
 
 interface CheckoutForm {
   firstName: string;
@@ -136,6 +137,24 @@ const CheckoutPage: React.FC = () => {
       console.log('Approving USDC...');
       const approveTx = await usdcContract.approve(contract.address, totalPrice);
       await approveTx.wait();
+      
+      // 检查USDC余额
+      if (!account) {
+        alert('请先连接钱包');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const balance = await checkUSDCBalance(account);
+      const balanceNumber = parseFloat(balance);
+      const totalPriceNumber = parseFloat(ethers.utils.formatUnits(totalPrice, 6));
+      
+      if (balanceNumber < totalPriceNumber) {
+        console.error('Insufficient USDC balance');
+        setIsSubmitting(false);
+        alert(`余额不足！当前余额: ${balance} USDC，需要: ${totalPriceNumber} USDC`);
+        return;
+      }
       
       // 调用buyGiftBox方法
       console.log('Buying gift box...');
@@ -312,6 +331,8 @@ const CheckoutPage: React.FC = () => {
                 </div>
                 
                 <h2 className="text-xl font-semibold text-white mt-8 mb-6">{t('checkout.paymentInfo')}</h2>
+                
+                <USDCGuide />
                 
                 <div className="bg-blue-900/20 border border-blue-800/30 rounded-lg p-4 mb-6">
                   <div className="flex items-start">

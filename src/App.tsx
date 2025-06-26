@@ -4,6 +4,7 @@ import { Web3Provider } from './contexts/Web3Context';
 import { CartProvider } from './contexts/CartContext';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import NetworkStatus from './components/NetworkStatus';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -21,6 +22,7 @@ function App() {
         <CartProvider>
           <Router>
             <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+              <NetworkStatus />
               <Header />
               <main className="flex-grow">
                 <Routes>
